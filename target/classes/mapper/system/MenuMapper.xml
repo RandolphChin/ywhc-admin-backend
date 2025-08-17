@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ywhc.admin.modules.system.menu.mapper.MenuMapper">
+
+    <!-- 根据用户ID查询菜单列表 -->
+    <select id="selectMenusByUserId" resultType="com.ywhc.admin.modules.system.menu.entity.SysMenu">
+        SELECT DISTINCT m.* FROM sys_menu m
+        LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+        LEFT JOIN sys_user_role ur ON rm.role_id = ur.role_id
+        LEFT JOIN sys_role r ON ur.role_id = r.id
+        WHERE ur.user_id = #{userId}
+          AND m.deleted = 0 
+          AND m.status = 1
+          AND r.deleted = 0 
+          AND r.status = 1
+        ORDER BY m.sort_order ASC, m.create_time ASC
+    </select>
+
+    <!-- 查询所有菜单树 -->
+    <select id="selectMenuTree" resultType="com.ywhc.admin.modules.system.menu.entity.SysMenu">
+        SELECT * FROM sys_menu 
+        WHERE deleted = 0 
+        ORDER BY sort_order ASC, create_time ASC
+    </select>
+
+    <!-- 根据父ID查询子菜单 -->
+    <select id="selectChildrenByParentId" resultType="com.ywhc.admin.modules.system.menu.entity.SysMenu">
+        SELECT * FROM sys_menu 
+        WHERE parent_id = #{parentId} 
+          AND deleted = 0 
+        ORDER BY sort_order ASC, create_time ASC
+    </select>
+
+    <!-- 检查菜单下是否有子菜单 -->
+    <select id="hasChildren" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM sys_menu 
+        WHERE parent_id = #{menuId} AND deleted = 0
+    </select>
+
+    <!-- 检查菜单是否被角色使用 -->
+    <select id="isUsedByRole" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM sys_role_menu 
+        WHERE menu_id = #{menuId}
+    </select>
+
+    <!-- 根据权限标识查询菜单 -->
+    <select id="selectByPermission" resultType="com.ywhc.admin.modules.system.menu.entity.SysMenu">
+        SELECT * FROM sys_menu 
+        WHERE permission = #{permission} AND deleted = 0
+    </select>
+
+</mapper>
