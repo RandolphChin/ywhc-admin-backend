@@ -16,6 +16,7 @@ import com.ywhc.admin.modules.system.user.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 /**
  * 用户服务实现类
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -42,7 +43,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     @Override
     public IPage<UserVO> pageUsers(UserQueryDTO queryDTO) {
         Page<SysUser> page = new Page<>(queryDTO.getCurrent(), queryDTO.getSize());
-        
+
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(StringUtils.hasText(queryDTO.getUsername()), SysUser::getUsername, queryDTO.getUsername())
                .like(StringUtils.hasText(queryDTO.getNickname()), SysUser::getNickname, queryDTO.getNickname())
@@ -55,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
                .orderByDesc(SysUser::getCreateTime);
 
         IPage<SysUser> userPage = this.page(page, wrapper);
-        
+
         // 转换为VO
         List<UserVO> userVOList = userPage.getRecords().stream()
                 .map(this::convertToVO)
@@ -63,7 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
 
         Page<UserVO> voPage = new Page<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
         voPage.setRecords(userVOList);
-        
+
         return voPage;
     }
 
@@ -105,7 +106,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
         BeanUtils.copyProperties(createDTO, user);
         user.setPassword(passwordEncoder.encode(createDTO.getPassword()));
         user.setStatus(createDTO.getStatus() != null ? createDTO.getStatus() : 1);
-        
+
         this.save(user);
 
         // 分配角色
@@ -180,7 +181,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
         if (userId.equals(1L)) {
             throw new RuntimeException("不能禁用超级管理员");
         }
-        
+
         SysUser user = new SysUser();
         user.setId(userId);
         user.setStatus(status);
@@ -194,7 +195,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
         LambdaQueryWrapper<SysUserRole> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysUserRole::getUserId, userId);
         // 这里需要UserRoleService，暂时省略具体实现
-        
+
         // 添加新角色
         if (roleIds != null && roleIds.length > 0) {
             List<SysUserRole> userRoles = Arrays.stream(roleIds)
@@ -239,15 +240,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     private UserVO convertToVO(SysUser user) {
         UserVO vo = new UserVO();
         BeanUtils.copyProperties(user, vo);
-        
+
         // 设置性别描述
         vo.setGenderDesc(getGenderDesc(user.getGender()));
-        
+
         // 设置状态描述
         vo.setStatusDesc(getStatusDesc(user.getStatus()));
-        
+
         // TODO: 设置角色信息，需要查询用户角色关联表
-        
+
         return vo;
     }
 
@@ -267,5 +268,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
      */
     private String getStatusDesc(Integer status) {
         return status == 1 ? "正常" : "禁用";
+    }
+
+    public static void main(String[] args) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String finalPassword = bCryptPasswordEncoder.encode("admin123");
+        System.out.println(finalPassword);
     }
 }

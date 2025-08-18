@@ -24,7 +24,7 @@ logging:
 
 # JWT配置 - 开发环境
 jwt:
-  secret: ywhc-admin-dev-secret-key-2024
+  secret: ywhc-admin-secret-key-2024-very-long-secret-key-for-security-must-be-at-least-32-bytes
   expiration: 86400000 # 24小时
   refresh-expiration: 604800000 # 7天
 
