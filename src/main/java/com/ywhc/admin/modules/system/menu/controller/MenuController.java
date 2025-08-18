@@ -75,7 +75,7 @@ public class MenuController {
     @Operation(summary = "更新菜单")
     @PutMapping
     @PreAuthorize("hasAuthority('system:menu:edit')")
-    public Result<Void> updateMenu(@Valid @RequestBody SysMenu menu) {
+    public Result<String> updateMenu(@Valid @RequestBody SysMenu menu) {
         menuService.updateMenu(menu);
         return Result.success("菜单更新成功");
     }
@@ -83,7 +83,7 @@ public class MenuController {
     @Operation(summary = "删除菜单")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('system:menu:delete')")
-    public Result<Void> deleteMenu(@Parameter(description = "菜单ID") @PathVariable Long id) {
+    public Result<String> deleteMenu(@Parameter(description = "菜单ID") @PathVariable Long id) {
         menuService.deleteMenu(id);
         return Result.success("菜单删除成功");
     }
@@ -91,7 +91,7 @@ public class MenuController {
     @Operation(summary = "修改菜单状态")
     @PutMapping("/{id}/status")
     @PreAuthorize("hasAuthority('system:menu:edit')")
-    public Result<Void> updateStatus(
+    public Result<String> updateStatus(
             @Parameter(description = "菜单ID") @PathVariable Long id,
             @Parameter(description = "状态：0-禁用，1-正常") @RequestParam Integer status) {
         menuService.updateStatus(id, status);

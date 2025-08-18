@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * 角色管理控制器
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -70,7 +70,7 @@ public class RoleController {
     @Operation(summary = "更新角色")
     @PutMapping
     @PreAuthorize("hasAuthority('system:role:edit')")
-    public Result<Void> updateRole(@Valid @RequestBody RoleUpdateDTO updateDTO) {
+    public Result<String> updateRole(@Valid @RequestBody RoleUpdateDTO updateDTO) {
         roleService.updateRole(updateDTO);
         return Result.success("角色更新成功");
     }
@@ -78,7 +78,7 @@ public class RoleController {
     @Operation(summary = "删除角色")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('system:role:delete')")
-    public Result<Void> deleteRole(@Parameter(description = "角色ID") @PathVariable Long id) {
+    public Result<String> deleteRole(@Parameter(description = "角色ID") @PathVariable Long id) {
         roleService.deleteRole(id);
         return Result.success("角色删除成功");
     }
@@ -86,7 +86,7 @@ public class RoleController {
     @Operation(summary = "批量删除角色")
     @DeleteMapping("/batch")
     @PreAuthorize("hasAuthority('system:role:delete')")
-    public Result<Void> deleteRoles(@RequestBody List<Long> roleIds) {
+    public Result<String> deleteRoles(@RequestBody List<Long> roleIds) {
         roleService.deleteRoles(roleIds);
         return Result.success("角色批量删除成功");
     }
@@ -94,7 +94,7 @@ public class RoleController {
     @Operation(summary = "修改角色状态")
     @PutMapping("/{id}/status")
     @PreAuthorize("hasAuthority('system:role:edit')")
-    public Result<Void> updateStatus(
+    public Result<String> updateStatus(
             @Parameter(description = "角色ID") @PathVariable Long id,
             @Parameter(description = "状态：0-禁用，1-正常") @RequestParam Integer status) {
         roleService.updateStatus(id, status);
@@ -104,7 +104,7 @@ public class RoleController {
     @Operation(summary = "分配角色菜单权限")
     @PutMapping("/{id}/menus")
     @PreAuthorize("hasAuthority('system:role:auth')")
-    public Result<Void> assignMenus(
+    public Result<String> assignMenus(
             @Parameter(description = "角色ID") @PathVariable Long id,
             @RequestBody Long[] menuIds) {
         roleService.assignMenus(id, menuIds);

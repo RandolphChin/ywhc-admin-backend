@@ -37,9 +37,9 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, SysLog> implements Lo
     }
 
     @Override
-    public void saveLog(SysLog log) {
+    public void saveLog(SysLog logs) {
         try {
-            this.save(log);
+            this.save(logs);
         } catch (Exception e) {
             log.error("保存操作日志失败: {}", e.getMessage());
         }

@@ -7,12 +7,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * YWHC后台管理系统启动类
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
+@MapperScan("com.ywhc.admin.modules.**.mapper")
 @SpringBootApplication
-@MapperScan("com.ywhc.admin.modules.*.mapper")
 @EnableTransactionManagement
 public class YwhcAdminApplication {
 

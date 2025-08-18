@@ -5,6 +5,7 @@ import com.ywhc.admin.common.result.Result;
 import com.ywhc.admin.modules.system.user.dto.UserCreateDTO;
 import com.ywhc.admin.modules.system.user.dto.UserQueryDTO;
 import com.ywhc.admin.modules.system.user.dto.UserUpdateDTO;
+import com.ywhc.admin.modules.system.user.entity.SysUser;
 import com.ywhc.admin.modules.system.user.service.UserService;
 import com.ywhc.admin.modules.system.user.vo.UserVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +20,7 @@ import java.util.List;
 
 /**
  * 用户管理控制器
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -42,9 +43,9 @@ public class UserController {
     @Operation(summary = "根据ID获取用户详情")
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('system:user:list')")
-    public Result<UserVO> getUserById(@Parameter(description = "用户ID") @PathVariable Long id) {
-        // TODO: 实现获取用户详情逻辑
-        return Result.success();
+    public Result<SysUser> getUserById(@Parameter(description = "用户ID") @PathVariable Long id) {
+        SysUser userVO = userService.getById(id);
+        return Result.success(userVO);
     }
 
     @Operation(summary = "创建用户")
@@ -58,7 +59,7 @@ public class UserController {
     @Operation(summary = "更新用户")
     @PutMapping
     @PreAuthorize("hasAuthority('system:user:edit')")
-    public Result<Void> updateUser(@Valid @RequestBody UserUpdateDTO updateDTO) {
+    public Result<String> updateUser(@Valid @RequestBody UserUpdateDTO updateDTO) {
         userService.updateUser(updateDTO);
         return Result.success("用户更新成功");
     }
@@ -66,7 +67,7 @@ public class UserController {
     @Operation(summary = "删除用户")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('system:user:delete')")
-    public Result<Void> deleteUser(@Parameter(description = "用户ID") @PathVariable Long id) {
+    public Result<String> deleteUser(@Parameter(description = "用户ID") @PathVariable Long id) {
         userService.deleteUser(id);
         return Result.success("用户删除成功");
     }
@@ -74,7 +75,7 @@ public class UserController {
     @Operation(summary = "批量删除用户")
     @DeleteMapping("/batch")
     @PreAuthorize("hasAuthority('system:user:delete')")
-    public Result<Void> deleteUsers(@RequestBody List<Long> userIds) {
+    public Result<String> deleteUsers(@RequestBody List<Long> userIds) {
         userService.deleteUsers(userIds);
         return Result.success("用户批量删除成功");
     }
@@ -82,7 +83,7 @@ public class UserController {
     @Operation(summary = "重置用户密码")
     @PutMapping("/{id}/reset-password")
     @PreAuthorize("hasAuthority('system:user:resetPwd')")
-    public Result<Void> resetPassword(
+    public Result<String> resetPassword(
             @Parameter(description = "用户ID") @PathVariable Long id,
             @Parameter(description = "新密码") @RequestParam String newPassword) {
         userService.resetPassword(id, newPassword);
@@ -92,7 +93,7 @@ public class UserController {
     @Operation(summary = "修改用户状态")
     @PutMapping("/{id}/status")
     @PreAuthorize("hasAuthority('system:user:edit')")
-    public Result<Void> updateStatus(
+    public Result<String> updateStatus(
             @Parameter(description = "用户ID") @PathVariable Long id,
             @Parameter(description = "状态：0-禁用，1-正常") @RequestParam Integer status) {
         userService.updateStatus(id, status);
@@ -102,7 +103,7 @@ public class UserController {
     @Operation(summary = "分配用户角色")
     @PutMapping("/{id}/roles")
     @PreAuthorize("hasAuthority('system:user:edit')")
-    public Result<Void> assignRoles(
+    public Result<String> assignRoles(
             @Parameter(description = "用户ID") @PathVariable Long id,
             @RequestBody Long[] roleIds) {
         userService.assignRoles(id, roleIds);

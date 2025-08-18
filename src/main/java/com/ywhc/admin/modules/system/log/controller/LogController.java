@@ -41,7 +41,7 @@ public class LogController {
     @Operation(summary = "清空日志")
     @DeleteMapping("/clear")
     @PreAuthorize("hasAuthority('system:log:delete')")
-    public Result<Void> clearLogs() {
+    public Result<String> clearLogs() {
         logService.clearLogs();
         return Result.success("日志清空成功");
     }
