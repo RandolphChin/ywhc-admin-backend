@@ -38,7 +38,6 @@ public class SecurityConfig {
     private final AuthenticationEntryPointImpl authenticationEntryPoint;
     private final AccessDeniedHandlerImpl accessDeniedHandler;
 
-
     /**
      * 认证管理器
      */
@@ -92,7 +91,7 @@ public class SecurityConfig {
     }
 
     /**
-     * CORS配置
+     * CORS配置 - 统一在Security中管理
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -102,7 +101,7 @@ public class SecurityConfig {
         configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
 
         // 允许的方法
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"));
 
         // 允许的头部
         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -112,6 +111,19 @@ public class SecurityConfig {
 
         // 预检请求的缓存时间
         configuration.setMaxAge(3600L);
+
+        // 允许的响应头
+        configuration.setExposedHeaders(Arrays.asList(
+            "Content-Length",
+            "Access-Control-Allow-Origin", 
+            "Access-Control-Allow-Headers",
+            "Cache-Control",
+            "Content-Language",
+            "Content-Type",
+            "Expires",
+            "Last-Modified",
+            "Pragma"
+        ));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
