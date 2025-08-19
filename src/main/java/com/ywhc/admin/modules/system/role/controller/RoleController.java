@@ -2,6 +2,8 @@ package com.ywhc.admin.modules.system.role.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ywhc.admin.common.result.Result;
+import com.ywhc.admin.common.annotation.LogAccess;
+import com.ywhc.admin.common.enums.OperationType;
 import com.ywhc.admin.modules.system.role.dto.RoleCreateDTO;
 import com.ywhc.admin.modules.system.role.dto.RoleUpdateDTO;
 import com.ywhc.admin.modules.system.role.service.RoleService;
@@ -59,6 +61,7 @@ public class RoleController {
         return Result.success();
     }
 
+    @LogAccess(value = "创建角色", module = "角色管理", operationType = OperationType.CREATE)
     @Operation(summary = "创建角色")
     @PostMapping
     @PreAuthorize("hasAuthority('system:role:add')")
@@ -67,6 +70,7 @@ public class RoleController {
         return Result.success("角色创建成功", roleId);
     }
 
+    @LogAccess(value = "更新角色", module = "角色管理", operationType = OperationType.UPDATE)
     @Operation(summary = "更新角色")
     @PutMapping
     @PreAuthorize("hasAuthority('system:role:edit')")
@@ -75,6 +79,7 @@ public class RoleController {
         return Result.success("角色更新成功");
     }
 
+    @LogAccess(value = "删除角色", module = "角色管理", operationType = OperationType.DELETE)
     @Operation(summary = "删除角色")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('system:role:delete')")

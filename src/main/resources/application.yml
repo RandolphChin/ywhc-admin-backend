@@ -8,20 +8,20 @@ spring:
     active: dev
   application:
     name: ywhc-admin-backend
-  
+
   # 数据源配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/ywhc_admin?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
     username: root
     password: 123456
-    
+
   # Redis配置
   data:
     redis:
       host: localhost
       port: 6379
-      password: 
+      password:
       database: 0
       timeout: 10s
       lettuce:
@@ -64,6 +64,7 @@ jwt:
   secret: ywhc-admin-secret-key-2024-very-long-secret-key-for-security-must-be-at-least-32-bytes
   expiration: 86400000 # 24小时
   refresh-expiration: 604800000 # 7天
+  token-prefix: "Bearer "
 
 # 日志配置
 logging:

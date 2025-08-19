@@ -9,7 +9,7 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
-      
+
   data:
     redis:
       host: ${REDIS_HOST:localhost}
@@ -33,6 +33,7 @@ jwt:
   secret: ${JWT_SECRET:ywhc-admin-prod-secret-key-2024-change-in-production}
   expiration: 7200000 # 2小时
   refresh-expiration: 604800000 # 7天
+  token-prefix: "Bearer "
 
 # Knife4j配置 - 生产环境
 knife4j:

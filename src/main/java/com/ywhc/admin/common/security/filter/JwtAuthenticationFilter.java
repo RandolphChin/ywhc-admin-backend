@@ -33,7 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsServiceImpl userDetailsService;
 
     private static final String TOKEN_HEADER = "Authorization";
-    private static final String TOKEN_PREFIX = "Bearer ";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -81,8 +80,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader(TOKEN_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_PREFIX)) {
-            return bearerToken.substring(TOKEN_PREFIX.length());
+        String tokenPrefix = jwtUtils.getTokenPrefix();
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(tokenPrefix)) {
+            return bearerToken.substring(tokenPrefix.length());
         }
         return null;
     }

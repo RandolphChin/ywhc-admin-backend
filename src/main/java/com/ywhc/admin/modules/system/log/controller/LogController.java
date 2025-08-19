@@ -2,8 +2,9 @@ package com.ywhc.admin.modules.system.log.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ywhc.admin.common.result.Result;
-import com.ywhc.admin.modules.system.log.annotation.LogAccess;
+import com.ywhc.admin.common.annotation.LogAccess;
 import com.ywhc.admin.modules.system.log.entity.SysLog;
+import com.ywhc.admin.common.enums.OperationType;
 import com.ywhc.admin.modules.system.log.service.LogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * 日志管理控制器
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -26,7 +27,7 @@ public class LogController {
 
     private final LogService logService;
 
-    @LogAccess(value = "查询日志列表", module = "日志管理", operationType = 4)
+    @LogAccess(value = "查询日志列表", module = "日志管理", operationType = OperationType.QUERY)
     @Operation(summary = "分页查询日志列表")
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('system:log:list')")
@@ -40,7 +41,7 @@ public class LogController {
         return Result.success(page);
     }
 
-    @LogAccess(value = "清空日志", module = "日志管理", operationType = 3)
+    @LogAccess(value = "清空日志", module = "日志管理", operationType = OperationType.DELETE)
     @Operation(summary = "清空日志")
     @DeleteMapping("/clear")
     @PreAuthorize("hasAuthority('system:log:delete')")

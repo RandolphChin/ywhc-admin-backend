@@ -2,6 +2,8 @@ package com.ywhc.admin.modules.system.user.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ywhc.admin.common.result.Result;
+import com.ywhc.admin.common.annotation.LogAccess;
+import com.ywhc.admin.common.enums.OperationType;
 import com.ywhc.admin.modules.system.user.dto.UserCreateDTO;
 import com.ywhc.admin.modules.system.user.dto.UserQueryDTO;
 import com.ywhc.admin.modules.system.user.dto.UserUpdateDTO;
@@ -32,6 +34,7 @@ public class UserController {
 
     private final UserService userService;
 
+    @LogAccess(value = "查询用户列表", module = "用户管理", operationType = OperationType.QUERY)
     @Operation(summary = "分页查询用户列表")
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('system:user:list')")
@@ -48,6 +51,7 @@ public class UserController {
         return Result.success(userVO);
     }
 
+    @LogAccess(value = "创建用户", module = "用户管理", operationType = OperationType.CREATE)
     @Operation(summary = "创建用户")
     @PostMapping
     @PreAuthorize("hasAuthority('system:user:add')")
@@ -56,6 +60,7 @@ public class UserController {
         return Result.success("用户创建成功", userId);
     }
 
+    @LogAccess(value = "更新用户", module = "用户管理", operationType = OperationType.UPDATE)
     @Operation(summary = "更新用户")
     @PutMapping
     @PreAuthorize("hasAuthority('system:user:edit')")
@@ -64,6 +69,7 @@ public class UserController {
         return Result.success("用户更新成功");
     }
 
+    @LogAccess(value = "删除用户", module = "用户管理", operationType = OperationType.DELETE)
     @Operation(summary = "删除用户")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('system:user:delete')")
@@ -72,6 +78,7 @@ public class UserController {
         return Result.success("用户删除成功");
     }
 
+    @LogAccess(value = "批量删除用户", module = "用户管理", operationType = OperationType.DELETE)
     @Operation(summary = "批量删除用户")
     @DeleteMapping("/batch")
     @PreAuthorize("hasAuthority('system:user:delete')")
@@ -80,6 +87,7 @@ public class UserController {
         return Result.success("用户批量删除成功");
     }
 
+    @LogAccess(value = "重置用户密码", module = "用户管理", operationType = OperationType.UPDATE)
     @Operation(summary = "重置用户密码")
     @PutMapping("/{id}/reset-password")
     @PreAuthorize("hasAuthority('system:user:resetPwd')")

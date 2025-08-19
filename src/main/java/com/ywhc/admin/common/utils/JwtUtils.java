@@ -31,6 +31,9 @@ public class JwtUtils {
     @Value("${jwt.refresh-expiration}")
     private Long refreshExpiration;
 
+    @Value("${jwt.token-prefix}")
+    private String tokenPrefix;
+
     /**
      * 生成JWT Token
      */
@@ -178,5 +181,12 @@ public class JwtUtils {
             log.error("Token刷新失败: {}", e.getMessage());
             throw new RuntimeException("Token刷新失败");
         }
+    }
+
+    /**
+     * 获取Token前缀
+     */
+    public String getTokenPrefix() {
+        return tokenPrefix;
     }
 }
