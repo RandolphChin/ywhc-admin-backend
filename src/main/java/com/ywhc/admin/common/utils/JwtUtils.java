@@ -1,4 +1,4 @@
-package com.ywhc.admin.utils;
+package com.ywhc.admin.common.utils;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * JWT工具类
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */

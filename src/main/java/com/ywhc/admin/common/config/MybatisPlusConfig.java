@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.apache.ibatis.reflection.MetaObject;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -14,11 +15,12 @@ import java.time.LocalDateTime;
 
 /**
  * MyBatis Plus配置类
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
 @Configuration
+@MapperScan(basePackages = "com.ywhc.admin.modules.**.mapper")
 public class MybatisPlusConfig {
 
     /**
@@ -41,7 +43,7 @@ public class MybatisPlusConfig {
             public void insertFill(MetaObject metaObject) {
                 LocalDateTime now = LocalDateTime.now();
                 Long userId = getCurrentUserId();
-                
+
                 this.strictInsertFill(metaObject, "createTime", LocalDateTime.class, now);
                 this.strictInsertFill(metaObject, "updateTime", LocalDateTime.class, now);
                 this.strictInsertFill(metaObject, "createBy", Long.class, userId);
@@ -52,7 +54,7 @@ public class MybatisPlusConfig {
             public void updateFill(MetaObject metaObject) {
                 LocalDateTime now = LocalDateTime.now();
                 Long userId = getCurrentUserId();
-                
+
                 this.strictUpdateFill(metaObject, "updateTime", LocalDateTime.class, now);
                 this.strictUpdateFill(metaObject, "updateBy", Long.class, userId);
             }
@@ -63,7 +65,7 @@ public class MybatisPlusConfig {
             private Long getCurrentUserId() {
                 try {
                     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                    if (authentication != null && authentication.getPrincipal() instanceof com.ywhc.admin.framework.security.service.SecurityUser securityUser) {
+                    if (authentication != null && authentication.getPrincipal() instanceof com.ywhc.admin.common.security.service.SecurityUser securityUser) {
                         return securityUser.getUserId();
                     }
                 } catch (Exception e) {

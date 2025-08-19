@@ -1,4 +1,4 @@
-package com.ywhc.admin.framework.security.handler;
+package com.ywhc.admin.common.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ywhc.admin.common.result.Result;
@@ -15,7 +15,7 @@ import java.io.IOException;
 
 /**
  * 权限不足处理器
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -26,17 +26,17 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
                       AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        
+
         log.error("权限不足: {}", accessDeniedException.getMessage());
-        
+
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json;charset=UTF-8");
-        
+
         Result<Object> result = Result.error(ResultCode.FORBIDDEN);
-        
+
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(result);
-        
+
         response.getWriter().write(json);
     }
 }

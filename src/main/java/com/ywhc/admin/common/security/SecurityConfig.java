@@ -1,8 +1,8 @@
-package com.ywhc.admin.framework.security;
+package com.ywhc.admin.common.security;
 
-import com.ywhc.admin.framework.security.filter.JwtAuthenticationFilter;
-import com.ywhc.admin.framework.security.handler.AuthenticationEntryPointImpl;
-import com.ywhc.admin.framework.security.handler.AccessDeniedHandlerImpl;
+import com.ywhc.admin.common.security.filter.JwtAuthenticationFilter;
+import com.ywhc.admin.common.security.handler.AuthenticationEntryPointImpl;
+import com.ywhc.admin.common.security.handler.AccessDeniedHandlerImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ import java.util.Collections;
 
 /**
  * Spring Security配置类
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -55,19 +55,19 @@ public class SecurityConfig {
         http
             // 禁用CSRF
             .csrf(AbstractHttpConfigurer::disable)
-            
+
             // 配置CORS
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            
+
             // 配置会话管理
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            
+
             // 配置异常处理
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler)
             )
-            
+
             // 配置请求授权
             .authorizeHttpRequests(auth -> auth
                 // 公开接口
@@ -80,11 +80,11 @@ public class SecurityConfig {
                     "/favicon.ico",
                     "/error"
                 ).permitAll()
-                
+
                 // 其他请求需要认证
                 .anyRequest().authenticated()
             )
-            
+
             // 添加JWT过滤器
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -97,25 +97,25 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
+
         // 允许的源
         configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
-        
+
         // 允许的方法
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        
+
         // 允许的头部
         configuration.setAllowedHeaders(Collections.singletonList("*"));
-        
+
         // 允许携带凭证
         configuration.setAllowCredentials(true);
-        
+
         // 预检请求的缓存时间
         configuration.setMaxAge(3600L);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-        
+
         return source;
     }
 }

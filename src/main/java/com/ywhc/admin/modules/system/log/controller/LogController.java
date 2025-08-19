@@ -2,6 +2,7 @@ package com.ywhc.admin.modules.system.log.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ywhc.admin.common.result.Result;
+import com.ywhc.admin.modules.system.log.annotation.LogAccess;
 import com.ywhc.admin.modules.system.log.entity.SysLog;
 import com.ywhc.admin.modules.system.log.service.LogService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,7 @@ public class LogController {
 
     private final LogService logService;
 
+    @LogAccess(value = "查询日志列表", module = "日志管理", operationType = 4)
     @Operation(summary = "分页查询日志列表")
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('system:log:list')")
@@ -38,6 +40,7 @@ public class LogController {
         return Result.success(page);
     }
 
+    @LogAccess(value = "清空日志", module = "日志管理", operationType = 3)
     @Operation(summary = "清空日志")
     @DeleteMapping("/clear")
     @PreAuthorize("hasAuthority('system:log:delete')")

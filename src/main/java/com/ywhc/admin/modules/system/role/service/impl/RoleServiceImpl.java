@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 /**
  * 角色服务实现类
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -39,7 +39,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
     @Override
     public IPage<RoleVO> pageRoles(Long current, Long size, String roleName, String roleKey, Integer status) {
         Page<SysRole> page = new Page<>(current, size);
-        
+
         LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(StringUtils.hasText(roleName), SysRole::getRoleName, roleName)
                .like(StringUtils.hasText(roleKey), SysRole::getRoleKey, roleKey)
@@ -48,7 +48,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
                .orderByDesc(SysRole::getCreateTime);
 
         IPage<SysRole> rolePage = this.page(page, wrapper);
-        
+
         // 转换为VO
         List<RoleVO> roleVOList = rolePage.getRecords().stream()
                 .map(this::convertToVO)
@@ -56,7 +56,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
 
         Page<RoleVO> voPage = new Page<>(rolePage.getCurrent(), rolePage.getSize(), rolePage.getTotal());
         voPage.setRecords(roleVOList);
-        
+
         return voPage;
     }
 
@@ -65,7 +65,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
         LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysRole::getStatus, 1)
                .orderByAsc(SysRole::getSortOrder);
-        
+
         List<SysRole> roles = this.list(wrapper);
         return roles.stream()
                 .map(this::convertToVO)
@@ -96,7 +96,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
         role.setStatus(createDTO.getStatus() != null ? createDTO.getStatus() : 1);
         role.setDataScope(createDTO.getDataScope() != null ? createDTO.getDataScope() : 1);
         role.setSortOrder(createDTO.getSortOrder() != null ? createDTO.getSortOrder() : 0);
-        
+
         this.save(role);
 
         // 分配菜单权限
@@ -175,7 +175,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
         if (roleId.equals(1L)) {
             throw new RuntimeException("不能禁用超级管理员角色");
         }
-        
+
         SysRole role = new SysRole();
         role.setId(roleId);
         role.setStatus(status);
@@ -189,7 +189,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
         LambdaQueryWrapper<SysRoleMenu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysRoleMenu::getRoleId, roleId);
         // 这里需要RoleMenuService，暂时省略具体实现
-        
+
         // 添加新权限
         if (menuIds != null && menuIds.length > 0) {
             List<SysRoleMenu> roleMenus = Arrays.stream(menuIds)
@@ -225,16 +225,16 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
     private RoleVO convertToVO(SysRole role) {
         RoleVO vo = new RoleVO();
         BeanUtils.copyProperties(role, vo);
-        
+
         // 设置数据权限描述
         vo.setDataScopeDesc(getDataScopeDesc(role.getDataScope()));
-        
+
         // 设置状态描述
         vo.setStatusDesc(getStatusDesc(role.getStatus()));
-        
+
         // 获取菜单权限ID列表
         vo.setMenuIds(getRoleMenuIds(role.getId()));
-        
+
         return vo;
     }
 

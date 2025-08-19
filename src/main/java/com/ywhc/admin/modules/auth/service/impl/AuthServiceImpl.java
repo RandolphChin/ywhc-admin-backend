@@ -1,14 +1,14 @@
 package com.ywhc.admin.modules.auth.service.impl;
 
 import com.ywhc.admin.common.result.ResultCode;
-import com.ywhc.admin.framework.security.service.SecurityUser;
+import com.ywhc.admin.common.security.service.SecurityUser;
 import com.ywhc.admin.modules.auth.dto.LoginDTO;
 import com.ywhc.admin.modules.auth.service.AuthService;
 import com.ywhc.admin.modules.auth.vo.LoginVO;
 import com.ywhc.admin.modules.auth.vo.UserInfoVO;
 import com.ywhc.admin.modules.system.user.entity.SysUser;
 import com.ywhc.admin.modules.system.user.service.UserService;
-import com.ywhc.admin.utils.JwtUtils;
+import com.ywhc.admin.common.utils.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  * 认证服务实现类
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -81,10 +81,10 @@ public class AuthServiceImpl implements AuthService {
         if (authentication != null && authentication.getPrincipal() instanceof SecurityUser securityUser) {
             log.info("用户 {} 登出成功", securityUser.getUsername());
         }
-        
+
         // 清除安全上下文
         SecurityContextHolder.clearContext();
-        
+
         // TODO: 将Token加入黑名单（如果使用Redis）
     }
 
@@ -96,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         SysUser user = securityUser.getUser();
-        
+
         UserInfoVO userInfoVO = new UserInfoVO();
         BeanUtils.copyProperties(user, userInfoVO);
         userInfoVO.setUserId(user.getId());
@@ -104,7 +104,7 @@ public class AuthServiceImpl implements AuthService {
         // 获取用户角色和权限
         Set<String> roles = userService.getUserRoles(user.getId());
         Set<String> permissions = userService.getUserPermissions(user.getId());
-        
+
         userInfoVO.setRoles(roles);
         userInfoVO.setPermissions(permissions);
 

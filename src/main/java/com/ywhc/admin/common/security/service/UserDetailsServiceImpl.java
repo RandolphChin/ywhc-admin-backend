@@ -1,4 +1,4 @@
-package com.ywhc.admin.framework.security.service;
+package com.ywhc.admin.common.security.service;
 
 import com.ywhc.admin.modules.system.user.entity.SysUser;
 import com.ywhc.admin.modules.system.user.service.UserService;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 /**
  * 用户详情服务实现类
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */

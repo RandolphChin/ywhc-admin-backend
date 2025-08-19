@@ -1,4 +1,4 @@
-package com.ywhc.admin.framework.security.service;
+package com.ywhc.admin.common.security.service;
 
 import com.ywhc.admin.modules.system.user.entity.SysUser;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.Collection;
 
 /**
  * 安全用户详情
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
