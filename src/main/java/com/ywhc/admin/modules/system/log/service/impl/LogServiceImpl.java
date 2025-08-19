@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * 日志服务实现类
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -24,12 +24,12 @@ import org.springframework.util.StringUtils;
 public class LogServiceImpl extends ServiceImpl<LogMapper, SysLog> implements LogService {
 
     @Override
-    public IPage<SysLog> pageLogs(Long current, Long size, String module, Integer operationType, Integer status) {
+    public IPage<SysLog> pageLogs(Long current, Long size, String module, String operationDesc, Integer status) {
         Page<SysLog> page = new Page<>(current, size);
-        
+
         LambdaQueryWrapper<SysLog> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(StringUtils.hasText(module), SysLog::getModule, module)
-               .eq(operationType != null, SysLog::getOperationType, operationType)
+               .eq(operationDesc != null, SysLog::getOperationDesc, operationDesc)
                .eq(status != null, SysLog::getStatus, status)
                .orderByDesc(SysLog::getCreateTime);
 

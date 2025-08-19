@@ -35,9 +35,9 @@ public class LogController {
             @Parameter(description = "当前页") @RequestParam(defaultValue = "1") Long current,
             @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") Long size,
             @Parameter(description = "操作模块") @RequestParam(required = false) String module,
-            @Parameter(description = "操作类型") @RequestParam(required = false) Integer operationType,
+            @Parameter(description = "操作描述") @RequestParam(required = false) String operationDesc,
             @Parameter(description = "操作状态") @RequestParam(required = false) Integer status) {
-        IPage<SysLog> page = logService.pageLogs(current, size, module, operationType, status);
+        IPage<SysLog> page = logService.pageLogs(current, size, module, operationDesc, status);
         return Result.success(page);
     }
 

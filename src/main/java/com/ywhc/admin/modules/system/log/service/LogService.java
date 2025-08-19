@@ -6,7 +6,7 @@ import com.ywhc.admin.modules.system.log.entity.SysLog;
 
 /**
  * 日志服务接口
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -15,7 +15,7 @@ public interface LogService extends IService<SysLog> {
     /**
      * 分页查询日志
      */
-    IPage<SysLog> pageLogs(Long current, Long size, String module, Integer operationType, Integer status);
+    IPage<SysLog> pageLogs(Long current, Long size, String module, String operationDesc, Integer status);
 
     /**
      * 保存操作日志
