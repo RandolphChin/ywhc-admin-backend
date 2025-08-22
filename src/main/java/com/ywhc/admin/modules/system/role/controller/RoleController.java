@@ -88,6 +88,7 @@ public class RoleController {
         return Result.success("角色删除成功");
     }
 
+    @LogAccess(value = "批量删除角色", module = "批量删除角色", operationType = OperationType.DELETE)
     @Operation(summary = "批量删除角色")
     @DeleteMapping("/batch")
     @PreAuthorize("hasAuthority('system:role:delete')")

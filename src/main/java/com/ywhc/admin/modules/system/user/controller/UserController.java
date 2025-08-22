@@ -34,7 +34,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @LogAccess(value = "查询用户列表", module = "用户管理", operationType = OperationType.QUERY)
+    // @LogAccess(value = "查询用户列表", module = "用户管理", operationType = OperationType.QUERY)
     @Operation(summary = "分页查询用户列表")
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('system:user:list')")

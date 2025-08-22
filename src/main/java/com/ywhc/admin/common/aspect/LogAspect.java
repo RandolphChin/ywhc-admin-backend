@@ -77,6 +77,8 @@ public class LogAspect {
             // 例如从SecurityContext或JWT token中获取
             String username = getCurrentUsername();
             sysLog.setUsername(username);
+            Long userId =getCurrentUserId();
+            sysLog.setUserId(userId);
         } catch (Exception e) {
             log.warn("获取当前用户信息失败: {}", e.getMessage());
         }
@@ -209,5 +211,22 @@ public class LogAspect {
         }
 
         return "anonymous";
+    }
+    private Long getCurrentUserId() {
+        // 方式3: 从请求头获取
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            HttpServletRequest request = attributes.getRequest();
+            String token = request.getHeader("Authorization");
+            if (token != null) {
+                // 解析token获取用户名
+                // 这里需要根据你的token解析逻辑来实现
+                token = token.replace(jwtUtils.getTokenPrefix(), "");
+                Long userId = jwtUtils.getUserIdFromToken(token);
+                return userId;
+            }
+        }
+
+        return null;
     }
 }

@@ -1,5 +1,7 @@
 package com.ywhc.admin.modules.system.menu.controller;
 
+import com.ywhc.admin.common.annotation.LogAccess;
+import com.ywhc.admin.common.enums.OperationType;
 import com.ywhc.admin.common.result.Result;
 import com.ywhc.admin.modules.system.menu.dto.MenuCreateDTO;
 import com.ywhc.admin.modules.system.menu.entity.SysMenu;
@@ -18,7 +20,7 @@ import java.util.List;
 
 /**
  * 菜单管理控制器
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -64,6 +66,7 @@ public class MenuController {
         return Result.success(menu);
     }
 
+    @LogAccess(value = "创建菜单", module = "创建菜单", operationType = OperationType.CREATE)
     @Operation(summary = "创建菜单")
     @PostMapping
     @PreAuthorize("hasAuthority('system:menu:add')")
@@ -72,6 +75,7 @@ public class MenuController {
         return Result.success("菜单创建成功", menuId);
     }
 
+    @LogAccess(value = "更新菜单", module = "更新菜单", operationType = OperationType.UPDATE)
     @Operation(summary = "更新菜单")
     @PutMapping
     @PreAuthorize("hasAuthority('system:menu:edit')")
@@ -80,6 +84,7 @@ public class MenuController {
         return Result.success("菜单更新成功");
     }
 
+    @LogAccess(value = "删除菜单", module = "删除菜单", operationType = OperationType.DELETE)
     @Operation(summary = "删除菜单")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('system:menu:delete')")
@@ -87,6 +92,7 @@ public class MenuController {
         menuService.deleteMenu(id);
         return Result.success("菜单删除成功");
     }
+
 
     @Operation(summary = "修改菜单状态")
     @PutMapping("/{id}/status")
