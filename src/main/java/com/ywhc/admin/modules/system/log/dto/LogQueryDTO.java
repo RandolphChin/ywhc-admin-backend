@@ -1,5 +1,6 @@
 package com.ywhc.admin.modules.system.log.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ywhc.admin.common.annotation.QueryField;
 import com.ywhc.admin.common.annotation.QueryType;
 import com.ywhc.admin.common.dto.BaseQueryDTO;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,6 +58,12 @@ public class LogQueryDTO extends BaseQueryDTO {
     @Schema(description = "操作时间范围")
     @QueryField(column = "create_time", type = QueryType.DATE_RANGE)
     private DateRange createTimeRange;
+/*
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @QueryField(column = "create_time", type = QueryType.DATE_RANGE)
+    private List<Date> createTimeList;
+*/
 
     @Schema(description = "操作类型 - IN查询")
     @QueryField(column = "operation_type", type = QueryType.IN)
