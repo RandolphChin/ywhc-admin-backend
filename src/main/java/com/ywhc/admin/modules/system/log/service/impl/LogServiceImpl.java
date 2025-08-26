@@ -5,12 +5,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ywhc.admin.modules.system.log.entity.SysLog;
+import com.ywhc.admin.modules.system.log.dto.LogQueryDTO;
 import com.ywhc.admin.modules.system.log.mapper.LogMapper;
 import com.ywhc.admin.modules.system.log.service.LogService;
+import com.ywhc.admin.common.util.QueryProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 /**
  * 日志服务实现类
@@ -24,16 +25,9 @@ import org.springframework.util.StringUtils;
 public class LogServiceImpl extends ServiceImpl<LogMapper, SysLog> implements LogService {
 
     @Override
-    public IPage<SysLog> pageLogs(Long current, Long size, String module, String operationDesc, Integer status) {
-        Page<SysLog> page = new Page<>(current, size);
-
-        LambdaQueryWrapper<SysLog> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(StringUtils.hasText(module), SysLog::getModule, module)
-               .eq(operationDesc != null, SysLog::getOperationDesc, operationDesc)
-               .eq(status != null, SysLog::getStatus, status)
-               .orderByDesc(SysLog::getCreateTime);
-
-        return this.page(page, wrapper);
+    public IPage<SysLog> pageLogs(LogQueryDTO queryDTO) {
+        Page<SysLog> page = new Page<>(queryDTO.getCurrent(), queryDTO.getSize());
+        return this.page(page, QueryProcessor.createQueryWrapper(queryDTO));
     }
 
     @Override

@@ -4,10 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ywhc.admin.common.result.Result;
 import com.ywhc.admin.common.annotation.LogAccess;
 import com.ywhc.admin.modules.system.log.entity.SysLog;
+import com.ywhc.admin.modules.system.log.dto.LogQueryDTO;
 import com.ywhc.admin.common.enums.OperationType;
 import com.ywhc.admin.modules.system.log.service.LogService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,13 +31,8 @@ public class LogController {
     @Operation(summary = "分页查询日志列表")
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('system:log:list')")
-    public Result<IPage<SysLog>> pageLogs(
-            @Parameter(description = "当前页") @RequestParam(defaultValue = "1") Long current,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") Long size,
-            @Parameter(description = "操作模块") @RequestParam(required = false) String module,
-            @Parameter(description = "操作描述") @RequestParam(required = false) String operationDesc,
-            @Parameter(description = "操作状态") @RequestParam(required = false) Integer status) {
-        IPage<SysLog> page = logService.pageLogs(current, size, module, operationDesc, status);
+    public Result<IPage<SysLog>> pageLogs(LogQueryDTO queryDTO) {
+        IPage<SysLog> page = logService.pageLogs(queryDTO);
         return Result.success(page);
     }
 
