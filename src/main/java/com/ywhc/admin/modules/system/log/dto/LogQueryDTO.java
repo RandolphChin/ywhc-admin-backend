@@ -8,6 +8,7 @@ import com.ywhc.admin.common.dto.DateRange;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -58,12 +59,10 @@ public class LogQueryDTO extends BaseQueryDTO {
     @Schema(description = "操作时间范围")
     @QueryField(column = "create_time", type = QueryType.DATE_RANGE)
     private DateRange createTimeRange;
-/*
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") // 用于URL参数
     @QueryField(column = "create_time", type = QueryType.DATE_RANGE)
-    private List<Date> createTimeList;
-*/
+    private List<LocalDateTime> createTimeBetween;
 
     @Schema(description = "操作类型 - IN查询")
     @QueryField(column = "operation_type", type = QueryType.IN)
