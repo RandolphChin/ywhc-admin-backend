@@ -9,26 +9,29 @@ import com.ywhc.admin.modules.system.menu.mapper.MenuMapper;
 import com.ywhc.admin.modules.system.menu.service.MenuService;
 import com.ywhc.admin.modules.system.menu.vo.MenuTreeVO;
 import com.ywhc.admin.modules.system.menu.vo.RouterVO;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * 菜单服务实现类
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements MenuService {
+public class MenuServiceImpl
+    extends ServiceImpl<MenuMapper, SysMenu>
+    implements MenuService {
 
     private final MenuMapper menuMapper;
 
@@ -48,9 +51,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
     public List<RouterVO> getRoutersByUserId(Long userId) {
         List<SysMenu> menus = menuMapper.selectMenusByUserId(userId);
         // 只获取目录和菜单类型，过滤掉按钮
-        List<SysMenu> routerMenus = menus.stream()
-                .filter(menu -> menu.getMenuType() != 2)
-                .collect(Collectors.toList());
+        List<SysMenu> routerMenus = menus
+            .stream()
+            .filter(menu -> menu.getMenuType() != 2)
+            .collect(Collectors.toList());
         return buildRouters(routerMenus);
     }
 
@@ -60,12 +64,22 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
         // 创建菜单
         SysMenu menu = new SysMenu();
         BeanUtils.copyProperties(createDTO, menu);
-        menu.setStatus(createDTO.getStatus() != null ? createDTO.getStatus() : 1);
-        menu.setSortOrder(createDTO.getSortOrder() != null ? createDTO.getSortOrder() : 0);
-        menu.setIsExternal(createDTO.getIsExternal() != null ? createDTO.getIsExternal() : 0);
-        menu.setIsCache(createDTO.getIsCache() != null ? createDTO.getIsCache() : 1);
-        menu.setIsVisible(createDTO.getIsVisible() != null ? createDTO.getIsVisible() : 1);
-        
+        menu.setStatus(
+            createDTO.getStatus() != null ? createDTO.getStatus() : 1
+        );
+        menu.setSortOrder(
+            createDTO.getSortOrder() != null ? createDTO.getSortOrder() : 0
+        );
+        menu.setIsExternal(
+            createDTO.getIsExternal() != null ? createDTO.getIsExternal() : 0
+        );
+        menu.setIsCache(
+            createDTO.getIsCache() != null ? createDTO.getIsCache() : 1
+        );
+        menu.setIsVisible(
+            createDTO.getIsVisible() != null ? createDTO.getIsVisible() : 1
+        );
+
         this.save(menu);
         return menu.getId();
     }
@@ -85,7 +99,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
     public void deleteMenu(Long menuId) {
         // 检查是否有子菜单
         if (hasChildren(menuId)) {
-            throw new RuntimeException(ResultCode.MENU_HAS_CHILDREN.getMessage());
+            throw new RuntimeException(
+                ResultCode.MENU_HAS_CHILDREN.getMessage()
+            );
         }
 
         // 检查是否被角色使用
@@ -117,7 +133,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
     @Override
     public List<MenuTreeVO> buildMenuTree(List<SysMenu> menus) {
         List<MenuTreeVO> tree = new ArrayList<>();
-        
+
         for (SysMenu menu : menus) {
             if (menu.getParentId() == 0) {
                 MenuTreeVO menuVO = convertToTreeVO(menu);
@@ -125,14 +141,14 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
                 tree.add(menuVO);
             }
         }
-        
+
         return tree;
     }
 
     @Override
     public List<RouterVO> buildRouters(List<SysMenu> menus) {
         List<RouterVO> routers = new ArrayList<>();
-        
+
         for (SysMenu menu : menus) {
             if (menu.getParentId() == 0) {
                 RouterVO router = convertToRouter(menu);
@@ -140,7 +156,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
                 routers.add(router);
             }
         }
-        
+
         return routers;
     }
 
@@ -149,7 +165,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
      */
     private List<MenuTreeVO> getChildren(Long parentId, List<SysMenu> menus) {
         List<MenuTreeVO> children = new ArrayList<>();
-        
+
         for (SysMenu menu : menus) {
             if (parentId.equals(menu.getParentId())) {
                 MenuTreeVO menuVO = convertToTreeVO(menu);
@@ -157,16 +173,19 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
                 children.add(menuVO);
             }
         }
-        
+
         return children;
     }
 
     /**
      * 获取子路由
      */
-    private List<RouterVO> getRouterChildren(Long parentId, List<SysMenu> menus) {
+    private List<RouterVO> getRouterChildren(
+        Long parentId,
+        List<SysMenu> menus
+    ) {
         List<RouterVO> children = new ArrayList<>();
-        
+
         for (SysMenu menu : menus) {
             if (parentId.equals(menu.getParentId())) {
                 RouterVO router = convertToRouter(menu);
@@ -174,7 +193,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
                 children.add(router);
             }
         }
-        
+
         return children;
     }
 
@@ -184,16 +203,16 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
     private MenuTreeVO convertToTreeVO(SysMenu menu) {
         MenuTreeVO vo = new MenuTreeVO();
         BeanUtils.copyProperties(menu, vo);
-        
+
         // 设置菜单类型描述
         vo.setMenuTypeDesc(getMenuTypeDesc(menu.getMenuType()));
-        
+
         // 设置状态描述
         vo.setStatusDesc(getStatusDesc(menu.getStatus()));
-        
+
         // 设置是否有子菜单
         vo.setHasChildren(hasChildren(menu.getId()));
-        
+
         return vo;
     }
 
@@ -205,7 +224,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
         router.setName(menu.getMenuName());
         router.setPath(menu.getPath());
         router.setComponent(menu.getComponent());
-        
+
         // 设置元信息
         RouterVO.Meta meta = new RouterVO.Meta();
         meta.setTitle(menu.getMenuName());
@@ -215,9 +234,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
         meta.setPermission(menu.getPermission());
         meta.setIsExternal(menu.getIsExternal() == 1);
         meta.setSortOrder(menu.getSortOrder());
-        
+
         router.setMeta(meta);
-        
+
         return router;
     }
 
@@ -238,5 +257,37 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
      */
     private String getStatusDesc(Integer status) {
         return status == 1 ? "正常" : "禁用";
+    }
+
+    @Override
+    public Map<String, String> getComponentMapping() {
+        log.info("开始查询组件映射数据...");
+
+        // 查询所有菜单类型为1（菜单）且有组件路径的记录
+        LambdaQueryWrapper<SysMenu> wrapper = new LambdaQueryWrapper<>();
+        wrapper
+            .eq(SysMenu::getMenuType, 1) // 只查询菜单类型
+            .isNotNull(SysMenu::getComponent) // 组件路径不为空
+            .ne(SysMenu::getComponent, "") // 组件路径不为空字符串
+            .eq(SysMenu::getDeleted, 0) // 未删除
+            .eq(SysMenu::getStatus, 1) // 状态正常
+            .orderByAsc(SysMenu::getSortOrder); // 按排序字段升序
+
+        List<SysMenu> menus = this.list(wrapper);
+
+        // 构建组件映射 Map
+        Map<String, String> componentMapping = new HashMap<>();
+        for (SysMenu menu : menus) {
+            String component = menu.getComponent();
+            if (component != null && !component.trim().isEmpty()) {
+                // key 和 value 都使用 component 字段值
+                // 前端会根据约定构建完整的组件路径
+                componentMapping.put(component, component);
+                log.debug("添加组件映射: {} -> {}", component, component);
+            }
+        }
+
+        log.info("组件映射查询完成，共找到 {} 个映射", componentMapping.size());
+        return componentMapping;
     }
 }

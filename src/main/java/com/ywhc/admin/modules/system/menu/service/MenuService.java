@@ -5,17 +5,16 @@ import com.ywhc.admin.modules.system.menu.dto.MenuCreateDTO;
 import com.ywhc.admin.modules.system.menu.entity.SysMenu;
 import com.ywhc.admin.modules.system.menu.vo.MenuTreeVO;
 import com.ywhc.admin.modules.system.menu.vo.RouterVO;
-
 import java.util.List;
+import java.util.Map;
 
 /**
  * 菜单服务接口
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
 public interface MenuService extends IService<SysMenu> {
-
     /**
      * 获取菜单树
      */
@@ -70,4 +69,10 @@ public interface MenuService extends IService<SysMenu> {
      * 构建路由树
      */
     List<RouterVO> buildRouters(List<SysMenu> menus);
+
+    /**
+     * 获取组件映射
+     * 从数据库查询所有菜单的组件路径映射
+     */
+    Map<String, String> getComponentMapping();
 }

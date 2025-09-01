@@ -3,6 +3,7 @@ package com.ywhc.admin.common.aspect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ywhc.admin.common.utils.JwtUtils;
 import com.ywhc.admin.common.annotation.LogAccess;
+import com.ywhc.admin.common.util.SecurityUtils;
 import com.ywhc.admin.modules.system.log.entity.SysLog;
 import com.ywhc.admin.modules.system.log.service.LogService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class LogAspect {
 
     private final LogService logService;
     private final ObjectMapper objectMapper;
-    private final JwtUtils jwtUtils;
+    private final SecurityUtils securityUtils;
 
     @Around("@annotation(com.ywhc.admin.common.annotation.LogAccess)")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -75,9 +76,9 @@ public class LogAspect {
         try {
             // 这里需要根据你的用户认证方式来获取用户信息
             // 例如从SecurityContext或JWT token中获取
-            String username = getCurrentUsername();
+            String username = securityUtils.getCurrentUsername();
             sysLog.setUsername(username);
-            Long userId =getCurrentUserId();
+            Long userId =securityUtils.getCurrentUserId();
             sysLog.setUserId(userId);
         } catch (Exception e) {
             log.warn("获取当前用户信息失败: {}", e.getMessage());
@@ -182,51 +183,4 @@ public class LogAspect {
         return request.getRemoteAddr();
     }
 
-    /**
-     * 获取当前用户名
-     * 需要根据你的认证方式进行调整
-     */
-    private String getCurrentUsername() {
-        // 方式1: 从Spring Security获取
-//         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//         if (authentication != null && authentication.isAuthenticated()) {
-//             return authentication.getName();
-//         }
-
-        // 方式2: 从JWT token获取
-        // 这里需要根据你的JWT实现来获取用户信息
-
-        // 方式3: 从请求头获取
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes != null) {
-            HttpServletRequest request = attributes.getRequest();
-            String token = request.getHeader("Authorization");
-            if (token != null) {
-                // 解析token获取用户名
-                // 这里需要根据你的token解析逻辑来实现
-                token = token.replace(jwtUtils.getTokenPrefix(), "");
-                String username = jwtUtils.getUsernameFromToken(token);
-                return username;
-            }
-        }
-
-        return "anonymous";
-    }
-    private Long getCurrentUserId() {
-        // 方式3: 从请求头获取
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes != null) {
-            HttpServletRequest request = attributes.getRequest();
-            String token = request.getHeader("Authorization");
-            if (token != null) {
-                // 解析token获取用户名
-                // 这里需要根据你的token解析逻辑来实现
-                token = token.replace(jwtUtils.getTokenPrefix(), "");
-                Long userId = jwtUtils.getUserIdFromToken(token);
-                return userId;
-            }
-        }
-
-        return null;
-    }
 }

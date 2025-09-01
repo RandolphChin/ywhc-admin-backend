@@ -12,11 +12,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 菜单管理控制器
@@ -61,21 +62,33 @@ public class MenuController {
     @Operation(summary = "根据ID获取菜单详情")
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('system:menu:list')")
-    public Result<SysMenu> getMenuById(@Parameter(description = "菜单ID") @PathVariable Long id) {
+    public Result<SysMenu> getMenuById(
+        @Parameter(description = "菜单ID") @PathVariable Long id
+    ) {
         SysMenu menu = menuService.getById(id);
         return Result.success(menu);
     }
 
-    @LogAccess(value = "创建菜单", module = "创建菜单", operationType = OperationType.CREATE)
+    @LogAccess(
+        value = "创建菜单",
+        module = "创建菜单",
+        operationType = OperationType.CREATE
+    )
     @Operation(summary = "创建菜单")
     @PostMapping
     @PreAuthorize("hasAuthority('system:menu:add')")
-    public Result<Long> createMenu(@Valid @RequestBody MenuCreateDTO createDTO) {
+    public Result<Long> createMenu(
+        @Valid @RequestBody MenuCreateDTO createDTO
+    ) {
         Long menuId = menuService.createMenu(createDTO);
         return Result.success("菜单创建成功", menuId);
     }
 
-    @LogAccess(value = "更新菜单", module = "更新菜单", operationType = OperationType.UPDATE)
+    @LogAccess(
+        value = "更新菜单",
+        module = "更新菜单",
+        operationType = OperationType.UPDATE
+    )
     @Operation(summary = "更新菜单")
     @PutMapping
     @PreAuthorize("hasAuthority('system:menu:edit')")
@@ -84,23 +97,40 @@ public class MenuController {
         return Result.success("菜单更新成功");
     }
 
-    @LogAccess(value = "删除菜单", module = "删除菜单", operationType = OperationType.DELETE)
+    @LogAccess(
+        value = "删除菜单",
+        module = "删除菜单",
+        operationType = OperationType.DELETE
+    )
     @Operation(summary = "删除菜单")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('system:menu:delete')")
-    public Result<String> deleteMenu(@Parameter(description = "菜单ID") @PathVariable Long id) {
+    public Result<String> deleteMenu(
+        @Parameter(description = "菜单ID") @PathVariable Long id
+    ) {
         menuService.deleteMenu(id);
         return Result.success("菜单删除成功");
     }
-
 
     @Operation(summary = "修改菜单状态")
     @PutMapping("/{id}/status")
     @PreAuthorize("hasAuthority('system:menu:edit')")
     public Result<String> updateStatus(
-            @Parameter(description = "菜单ID") @PathVariable Long id,
-            @Parameter(description = "状态：0-禁用，1-正常") @RequestParam Integer status) {
+        @Parameter(description = "菜单ID") @PathVariable Long id,
+        @Parameter(
+            description = "状态：0-禁用，1-正常"
+        ) @RequestParam Integer status
+    ) {
         menuService.updateStatus(id, status);
         return Result.success("菜单状态修改成功");
+    }
+
+    @Operation(summary = "获取组件映射配置")
+    @GetMapping("/component-mapping")
+    public Result<Map<String, String>> getComponentMapping() {
+        // 从数据库动态查询组件映射
+        Map<String, String> componentMapping =
+            menuService.getComponentMapping();
+        return Result.success(componentMapping);
     }
 }
