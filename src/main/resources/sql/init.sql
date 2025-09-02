@@ -157,12 +157,15 @@ CREATE TABLE `sys_log` (
 -- ----------------------------
 
 -- 初始化菜单数据
-INSERT INTO `sys_menu` VALUES 
+INSERT INTO `sys_menu` VALUES
 (1, 0, '系统管理', 0, '/system', NULL, 'system:manage', 'settings', 1, 0, 1, 1, 1, '系统管理目录', 0, NOW(), NOW(), 1, 1),
 (2, 1, '用户管理', 1, '/system/user', 'system/user/index', 'system:user:list', 'people', 1, 0, 1, 1, 1, '用户管理菜单', 0, NOW(), NOW(), 1, 1),
 (3, 1, '角色管理', 1, '/system/role', 'system/role/index', 'system:role:list', 'assignment_ind', 2, 0, 1, 1, 1, '角色管理菜单', 0, NOW(), NOW(), 1, 1),
 (4, 1, '菜单管理', 1, '/system/menu', 'system/menu/index', 'system:menu:list', 'menu', 3, 0, 1, 1, 1, '菜单管理菜单', 0, NOW(), NOW(), 1, 1),
 (5, 1, '日志管理', 1, '/system/log', 'system/log/index', 'system:log:list', 'description', 4, 0, 1, 1, 1, '日志管理菜单', 0, NOW(), NOW(), 1, 1),
+
+(6, 0, '系统监控', 0, '/monitor', NULL, 'monitor:manage', 'monitor', 2, 0, 1, 1, 1, '系统监控目录', 0, NOW(), NOW(), 1, 1),
+(7, 6, '在线用户', 1, '/monitor/online', 'monitor/online/index', 'monitor:online:list', 'people_outline', 1, 0, 1, 1, 1, '在线用户菜单', 0, NOW(), NOW(), 1, 1),
 
 -- 用户管理按钮权限
 (11, 2, '用户新增', 2, NULL, NULL, 'system:user:add', NULL, 1, 0, 1, 1, 1, '用户新增按钮', 0, NOW(), NOW(), 1, 1),
@@ -180,47 +183,57 @@ INSERT INTO `sys_menu` VALUES
 -- 菜单管理按钮权限
 (31, 4, '菜单新增', 2, NULL, NULL, 'system:menu:add', NULL, 1, 0, 1, 1, 1, '菜单新增按钮', 0, NOW(), NOW(), 1, 1),
 (32, 4, '菜单修改', 2, NULL, NULL, 'system:menu:edit', NULL, 2, 0, 1, 1, 1, '菜单修改按钮', 0, NOW(), NOW(), 1, 1),
-(33, 4, '菜单删除', 2, NULL, NULL, 'system:menu:delete', NULL, 3, 0, 1, 1, 1, '菜单删除按钮', 0, NOW(), NOW(), 1, 1);
+(33, 4, '菜单删除', 2, NULL, NULL, 'system:menu:delete', NULL, 3, 0, 1, 1, 1, '菜单删除按钮', 0, NOW(), NOW(), 1, 1),
+
+-- 在线用户管理按钮权限
+(41, 7, '强制下线', 2, NULL, NULL, 'monitor:online:forceLogout', NULL, 1, 0, 1, 1, 1, '强制下线按钮', 0, NOW(), NOW(), 1, 1),
+(42, 7, '清理过期', 2, NULL, NULL, 'monitor:online:clean', NULL, 2, 0, 1, 1, 1, '清理过期按钮', 0, NOW(), NOW(), 1, 1);
 
 -- 初始化角色数据
-INSERT INTO `sys_role` VALUES 
+INSERT INTO `sys_role` VALUES
 (1, '超级管理员', 'admin', '超级管理员，拥有所有权限', 1, 1, 1, '超级管理员角色', 0, NOW(), NOW(), 1, 1),
 (2, '普通用户', 'user', '普通用户，基础权限', 4, 2, 1, '普通用户角色', 0, NOW(), NOW(), 1, 1);
 
 -- 初始化用户数据 (密码: admin123)
-INSERT INTO `sys_user` VALUES 
+INSERT INTO `sys_user` VALUES
 (1, 'admin', '$2a$10$7JB720yubVSOfvVWbazBuOWWZHrOqImqwawBM07vYX9/Ls9Fo/.DS', '超级管理员', 'admin@ywhc.com', '13800138000', NULL, 1, 1, NULL, NULL, '系统管理员账号', 0, NOW(), NOW(), 1, 1),
 (2, 'user', '$2a$10$7JB720yubVSOfvVWbazBuOWWZHrOqImqwawBM07vYX9/Ls9Fo/.DS', '普通用户', 'user@ywhc.com', '13800138001', NULL, 1, 1, NULL, NULL, '普通用户账号', 0, NOW(), NOW(), 1, 1);
 
 -- 初始化用户角色关联数据
-INSERT INTO `sys_user_role` VALUES 
+INSERT INTO `sys_user_role` VALUES
 (1, 1, 1, NOW(), 1),
 (2, 2, 2, NOW(), 1);
 
 -- 初始化角色菜单权限关联数据 (超级管理员拥有所有权限)
-INSERT INTO `sys_role_menu` VALUES 
+INSERT INTO `sys_role_menu` VALUES
 (1, 1, 1, NOW(), 1),
 (2, 1, 2, NOW(), 1),
 (3, 1, 3, NOW(), 1),
 (4, 1, 4, NOW(), 1),
 (5, 1, 5, NOW(), 1),
-(6, 1, 11, NOW(), 1),
-(7, 1, 12, NOW(), 1),
-(8, 1, 13, NOW(), 1),
-(9, 1, 14, NOW(), 1),
-(10, 1, 15, NOW(), 1),
-(11, 1, 21, NOW(), 1),
-(12, 1, 22, NOW(), 1),
-(13, 1, 23, NOW(), 1),
-(14, 1, 24, NOW(), 1),
-(15, 1, 31, NOW(), 1),
-(16, 1, 32, NOW(), 1),
-(17, 1, 33, NOW(), 1);
+(6, 1, 6, NOW(), 1),
+(7, 1, 7, NOW(), 1),
+(8, 1, 11, NOW(), 1),
+(9, 1, 12, NOW(), 1),
+(10, 1, 13, NOW(), 1),
+(11, 1, 14, NOW(), 1),
+(12, 1, 15, NOW(), 1),
+(13, 1, 21, NOW(), 1),
+(14, 1, 22, NOW(), 1),
+(15, 1, 23, NOW(), 1),
+(16, 1, 24, NOW(), 1),
+(17, 1, 31, NOW(), 1),
+(18, 1, 32, NOW(), 1),
+(19, 1, 33, NOW(), 1),
+(20, 1, 41, NOW(), 1),
+(21, 1, 42, NOW(), 1);
 
 -- 普通用户权限 (只有查看权限)
-INSERT INTO `sys_role_menu` VALUES 
-(18, 2, 1, NOW(), 1),
-(19, 2, 2, NOW(), 1),
-(20, 2, 3, NOW(), 1),
-(21, 2, 4, NOW(), 1),
-(22, 2, 5, NOW(), 1);
+INSERT INTO `sys_role_menu` VALUES
+(22, 2, 1, NOW(), 1),
+(23, 2, 2, NOW(), 1),
+(24, 2, 3, NOW(), 1),
+(25, 2, 4, NOW(), 1),
+(26, 2, 5, NOW(), 1),
+(27, 2, 6, NOW(), 1),
+(28, 2, 7, NOW(), 1);

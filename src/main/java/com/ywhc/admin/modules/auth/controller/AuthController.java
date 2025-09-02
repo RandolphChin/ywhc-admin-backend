@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * 认证控制器
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -28,9 +28,12 @@ public class AuthController {
 
     @Operation(summary = "用户登录")
     @PostMapping("/login")
-    public Result<LoginVO> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletRequest request) {
+    public Result<LoginVO> login(
+        @Valid @RequestBody LoginDTO loginDTO,
+        HttpServletRequest request
+    ) {
         String clientIp = getClientIp(request);
-        LoginVO loginVO = authService.login(loginDTO, clientIp);
+        LoginVO loginVO = authService.login(loginDTO, clientIp, request);
         return Result.success("登录成功", loginVO);
     }
 
@@ -61,8 +64,10 @@ public class AuthController {
     private String getClientIp(HttpServletRequest request) {
         String xip = request.getHeader("X-Real-IP");
         String xfor = request.getHeader("X-Forwarded-For");
-        
-        if (xfor != null && !xfor.isEmpty() && !"unknown".equalsIgnoreCase(xfor)) {
+
+        if (
+            xfor != null && !xfor.isEmpty() && !"unknown".equalsIgnoreCase(xfor)
+        ) {
             int index = xfor.indexOf(",");
             if (index != -1) {
                 return xfor.substring(0, index);
@@ -70,15 +75,17 @@ public class AuthController {
                 return xfor;
             }
         }
-        
+
         if (xip != null && !xip.isEmpty() && !"unknown".equalsIgnoreCase(xip)) {
             return xip;
         }
-        
-        if (xfor != null && !xfor.isEmpty() && !"unknown".equalsIgnoreCase(xfor)) {
+
+        if (
+            xfor != null && !xfor.isEmpty() && !"unknown".equalsIgnoreCase(xfor)
+        ) {
             return xfor;
         }
-        
+
         return request.getRemoteAddr();
     }
 }

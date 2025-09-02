@@ -7,16 +7,19 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 认证服务接口
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
 public interface AuthService {
-
     /**
      * 用户登录
      */
-    LoginVO login(LoginDTO loginDTO, String clientIp);
+    LoginVO login(
+        LoginDTO loginDTO,
+        String clientIp,
+        HttpServletRequest request
+    );
 
     /**
      * 用户登出
