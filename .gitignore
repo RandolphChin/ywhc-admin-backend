@@ -1,7 +1,4 @@
 .idea
-.vscode/
+.vscode
 target
-/.idea/
 logs
-.idea/*
-/target/
