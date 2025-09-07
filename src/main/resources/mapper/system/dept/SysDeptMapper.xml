@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ywhc.admin.modules.system.dept.mapper.SysDeptMapper">
+
+    <resultMap type="com.ywhc.admin.modules.system.dept.entity.SysDept" id="SysDeptResult">
+        <id property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="deptCode" column="dept_code"/>
+        <result property="deptType" column="dept_type"/>
+        <result property="leaderId" column="leader_id"/>
+        <result property="leaderName" column="leader_name"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="ancestors" column="ancestors"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+    </resultMap>
+
+    <sql id="selectDeptVo">
+        select d.id, d.parent_id, d.dept_name, d.dept_code, d.dept_type, d.leader_id, d.leader_name, 
+               d.phone, d.email, d.ancestors, d.sort_order, d.status, d.remark, d.deleted,
+               d.create_time, d.update_time, d.create_by, d.update_by
+        from sys_dept d
+    </sql>
+
+    <select id="selectDeptList" parameterType="com.ywhc.admin.modules.system.dept.entity.SysDept" resultMap="SysDeptResult">
+        <include refid="selectDeptVo"/>
+        where d.deleted = 0
+        <if test="deptName != null and deptName != ''">
+            AND d.dept_name like concat('%', #{deptName}, '%')
+        </if>
+        <if test="status != null">
+            AND d.status = #{status}
+        </if>
+        order by d.parent_id, d.sort_order
+    </select>
+
+    <select id="selectDeptListByRoleId" parameterType="Long" resultType="Long">
+        select d.id
+        from sys_dept d
+        left join sys_role_dept rd on d.id = rd.dept_id
+        where rd.role_id = #{roleId}
+        and d.deleted = 0
+        order by d.parent_id, d.sort_order
+    </select>
+
+    <select id="selectChildrenDeptById" parameterType="Long" resultType="Long">
+        select id from sys_dept where find_in_set(#{deptId}, ancestors) and deleted = 0
+    </select>
+
+    <select id="selectAncestorsDeptById" parameterType="Long" resultType="Long">
+        <![CDATA[
+        select id from sys_dept 
+        where id in (
+            select SUBSTRING_INDEX(SUBSTRING_INDEX(#{ancestors}, ',', numbers.n), ',', -1) as id
+            from (
+                select 1 n union all select 2 union all select 3 union all select 4 union all select 5 
+                union all select 6 union all select 7 union all select 8 union all select 9 union all select 10
+            ) numbers
+            where CHAR_LENGTH(#{ancestors}) - CHAR_LENGTH(REPLACE(#{ancestors}, ',', '')) >= numbers.n - 1
+        ) and id != 0 and deleted = 0
+        ]]>
+    </select>
+
+    <update id="updateDeptChildren" parameterType="java.util.List">
+        <foreach collection="depts" item="item" index="index" open="" close="" separator=";">
+            update sys_dept set ancestors = #{item.ancestors} where id = #{item.id}
+        </foreach>
+    </update>
+
+    <select id="checkDeptNameUnique" resultType="int">
+        select count(1) from sys_dept 
+        where dept_name = #{deptName} and parent_id = #{parentId} and deleted = 0
+        <if test="deptId != null and deptId != -1">
+            and id != #{deptId}
+        </if>
+    </select>
+
+    <select id="checkDeptCodeUnique" resultType="int">
+        select count(1) from sys_dept 
+        where dept_code = #{deptCode} and deleted = 0
+        <if test="deptId != null and deptId != -1">
+            and id != #{deptId}
+        </if>
+    </select>
+
+</mapper>

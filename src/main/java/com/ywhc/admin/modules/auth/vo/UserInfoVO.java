@@ -80,6 +80,21 @@ public class UserInfoVO implements Serializable {
      */
     private List<MenuInfo> menus;
 
+    /**
+     * 部门ID
+     */
+    private Long deptId;
+
+    /**
+     * 部门名称
+     */
+    private String deptName;
+
+    /**
+     * 数据权限范围
+     */
+    private List<Long> dataScope;
+
     @Data
     public static class MenuInfo {
         private Long id;

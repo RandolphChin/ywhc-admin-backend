@@ -1,7 +1,10 @@
 package com.ywhc.admin.common.util;
 
+import com.ywhc.admin.common.security.service.SecurityUser;
 import com.ywhc.admin.common.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -70,6 +73,18 @@ public class SecurityUtils {
             }
         }
 
+        return null;
+    }
+
+    /**
+     * 静态方法获取当前用户ID
+     * 通过Spring Security上下文获取
+     */
+    public static Long getUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof SecurityUser securityUser) {
+            return securityUser.getUser().getId();
+        }
         return null;
     }
 }

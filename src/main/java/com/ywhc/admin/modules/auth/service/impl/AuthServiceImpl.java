@@ -11,6 +11,7 @@ import com.ywhc.admin.modules.monitor.online.entity.OnlineUser;
 import com.ywhc.admin.modules.monitor.online.service.OnlineUserService;
 import com.ywhc.admin.modules.system.user.entity.SysUser;
 import com.ywhc.admin.modules.system.user.service.UserService;
+import com.ywhc.admin.modules.system.dept.service.SysDeptService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -39,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final JwtUtils jwtUtils;
     private final OnlineUserService onlineUserService;
+    private final SysDeptService sysDeptService;
 
     @Override
     public LoginVO login(
@@ -165,6 +167,27 @@ public class AuthServiceImpl implements AuthService {
 
         userInfoVO.setRoles(roles);
         userInfoVO.setPermissions(permissions);
+
+        // 获取用户部门信息
+        if (user.getDeptId() != null) {
+            userInfoVO.setDeptId(user.getDeptId());
+            try {
+                var dept = sysDeptService.getById(user.getDeptId());
+                if (dept != null) {
+                    userInfoVO.setDeptName(dept.getDeptName());
+                }
+            } catch (Exception e) {
+                log.warn("获取用户部门信息失败: {}", e.getMessage());
+            }
+        }
+
+        // 获取用户数据权限范围
+        try {
+            Set<Long> dataScope = sysDeptService.getDataScope(user.getId());
+            userInfoVO.setDataScope(dataScope.stream().toList());
+        } catch (Exception e) {
+            log.warn("获取用户数据权限失败: {}", e.getMessage());
+        }
 
         // TODO: 获取用户菜单树
 

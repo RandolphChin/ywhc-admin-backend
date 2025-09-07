@@ -1,4 +1,4 @@
-package com.ywhc.admin.modules.system.user.entity;
+package com.ywhc.admin.modules.system.dept.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
@@ -8,15 +8,15 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 系统用户实体类
+ * 系统部门实体类
  * 
  * @author YWHC Team
  * @since 2024-01-01
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("sys_user")
-public class SysUser implements Serializable {
+@TableName("sys_dept")
+public class SysDept implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -27,22 +27,46 @@ public class SysUser implements Serializable {
     private Long id;
 
     /**
-     * 用户名
+     * 父部门ID
      */
-    @TableField("username")
-    private String username;
+    @TableField("parent_id")
+    private Long parentId;
 
     /**
-     * 密码
+     * 部门名称
      */
-    @TableField("password")
-    private String password;
+    @TableField("dept_name")
+    private String deptName;
 
     /**
-     * 昵称
+     * 部门编码
      */
-    @TableField("nickname")
-    private String nickname;
+    @TableField("dept_code")
+    private String deptCode;
+
+    /**
+     * 部门类型：1-公司，2-部门，3-小组
+     */
+    @TableField("dept_type")
+    private Integer deptType;
+
+    /**
+     * 负责人ID
+     */
+    @TableField("leader_id")
+    private Long leaderId;
+
+    /**
+     * 负责人姓名
+     */
+    @TableField("leader_name")
+    private String leaderName;
+
+    /**
+     * 联系电话
+     */
+    @TableField("phone")
+    private String phone;
 
     /**
      * 邮箱
@@ -51,46 +75,22 @@ public class SysUser implements Serializable {
     private String email;
 
     /**
-     * 手机号
+     * 部门层级路径，如：1,2,3
      */
-    @TableField("mobile")
-    private String mobile;
+    @TableField("ancestors")
+    private String ancestors;
 
     /**
-     * 头像
+     * 排序
      */
-    @TableField("avatar")
-    private String avatar;
-
-    /**
-     * 性别：0-未知，1-男，2-女
-     */
-    @TableField("gender")
-    private Integer gender;
+    @TableField("sort_order")
+    private Integer sortOrder;
 
     /**
      * 状态：0-禁用，1-正常
      */
     @TableField("status")
     private Integer status;
-
-    /**
-     * 最后登录时间
-     */
-    @TableField("last_login_time")
-    private LocalDateTime lastLoginTime;
-
-    /**
-     * 最后登录IP
-     */
-    @TableField("last_login_ip")
-    private String lastLoginIp;
-
-    /**
-     * 部门ID
-     */
-    @TableField("dept_id")
-    private Long deptId;
 
     /**
      * 备注
