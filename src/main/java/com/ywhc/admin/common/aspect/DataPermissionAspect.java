@@ -1,6 +1,7 @@
 package com.ywhc.admin.common.aspect;
 
 import com.ywhc.admin.common.annotation.DataPermission;
+import com.ywhc.admin.common.context.DataScopeContextHolder;
 import com.ywhc.admin.common.util.SecurityUtils;
 import com.ywhc.admin.modules.system.dept.service.SysDeptService;
 import lombok.extern.slf4j.Slf4j;
@@ -92,24 +93,5 @@ public class DataPermissionAspect {
      */
     protected void clearDataScope() {
         DataScopeContextHolder.clear();
-    }
-}
-
-/**
- * 数据权限上下文持有者
- */
-class DataScopeContextHolder {
-    private static final ThreadLocal<String> CONTEXT_HOLDER = new ThreadLocal<>();
-
-    public static void setDataScope(String dataScope) {
-        CONTEXT_HOLDER.set(dataScope);
-    }
-
-    public static String getDataScope() {
-        return CONTEXT_HOLDER.get();
-    }
-
-    public static void clear() {
-        CONTEXT_HOLDER.remove();
     }
 }

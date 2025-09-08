@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.ywhc.admin.common.interceptor.DataPermissionInterceptor;
 import org.apache.ibatis.reflection.MetaObject;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +33,15 @@ public class MybatisPlusConfig {
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
+
+    /**
+     * 数据权限拦截器
+     * 注意：需要JSQLParser依赖才能正常工作，否则数据权限功能不会生效
+     */
+     @Bean
+     public DataPermissionInterceptor dataPermissionInterceptor() {
+         return new DataPermissionInterceptor();
+     }
 
     /**
      * 自动填充处理器
