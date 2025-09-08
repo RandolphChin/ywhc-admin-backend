@@ -189,4 +189,11 @@ public class JwtUtils {
     public String getTokenPrefix() {
         return tokenPrefix;
     }
+
+    /**
+     *  获取Token过期时长
+     */
+    public Long getExpiration() {
+        return expiration;
+    }
 }

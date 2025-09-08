@@ -78,7 +78,9 @@ public class DataPermissionAspect {
                 if (!userAlias.isEmpty()) {
                     sqlString.append(userAlias).append(".");
                 }
-                sqlString.append(userColumn).append(" = ").append(userId);
+                // 直接使用指定的用户列名，不做额外的表别名处理
+                sqlString.append(userColumn);
+                sqlString.append(" = ").append(userId);
             }
             
             // 将SQL片段存储到ThreadLocal中

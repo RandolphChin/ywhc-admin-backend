@@ -91,7 +91,7 @@ public class AuthServiceImpl implements AuthService {
         LoginVO loginVO = new LoginVO();
         loginVO.setAccessToken(accessToken);
         loginVO.setRefreshToken(refreshToken);
-        loginVO.setExpiresIn(86400L); // 24小时
+        loginVO.setExpiresIn(jwtUtils.getExpiration()); // 24小时
 
         // 用户信息
         LoginVO.UserInfo userInfo = new LoginVO.UserInfo();
