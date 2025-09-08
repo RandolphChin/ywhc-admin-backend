@@ -3,6 +3,7 @@ package com.ywhc.admin.modules.system.menu.controller;
 import com.ywhc.admin.common.annotation.LogAccess;
 import com.ywhc.admin.common.enums.OperationType;
 import com.ywhc.admin.common.result.Result;
+import com.ywhc.admin.common.util.SecurityUtils;
 import com.ywhc.admin.modules.system.menu.dto.MenuCreateDTO;
 import com.ywhc.admin.modules.system.menu.entity.SysMenu;
 import com.ywhc.admin.modules.system.menu.service.MenuService;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 public class MenuController {
 
     private final MenuService menuService;
+    private final SecurityUtils securityUtils;
 
     @Operation(summary = "获取菜单树")
     @GetMapping("/tree")
@@ -44,8 +46,7 @@ public class MenuController {
     @Operation(summary = "获取当前用户菜单树")
     @GetMapping("/user-tree")
     public Result<List<MenuTreeVO>> getUserMenuTree() {
-        // TODO: 从当前用户上下文获取用户ID
-        Long userId = 1L; // 临时使用
+        Long userId = securityUtils.getCurrentUserId();
         List<MenuTreeVO> tree = menuService.getMenuTreeByUserId(userId);
         return Result.success(tree);
     }

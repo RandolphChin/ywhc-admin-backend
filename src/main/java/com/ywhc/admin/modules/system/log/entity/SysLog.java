@@ -39,6 +39,24 @@ public class SysLog implements Serializable {
     private String username;
 
     /**
+     * 创建人ID
+     */
+    @TableField(value = "create_by", fill = FieldFill.INSERT)
+    private Long createBy;
+
+    /**
+     * 部门ID
+     */
+    @TableField("dept_id")
+    private Long deptId;
+
+    /**
+     * 部门名称
+     */
+    @TableField("dept_name")
+    private String deptName;
+
+    /**
      * 操作模块
      */
     @TableField("module")

@@ -87,4 +87,40 @@ public class SecurityUtils {
         }
         return null;
     }
+
+    /**
+     * 静态方法获取当前用户名
+     * 通过Spring Security上下文获取
+     */
+    public static String getUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof SecurityUser securityUser) {
+            return securityUser.getUser().getUsername();
+        }
+        return null;
+    }
+
+    /**
+     * 获取当前用户部门ID
+     */
+    public Long getCurrentUserDeptId() {
+        // 从Spring Security获取
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof SecurityUser securityUser) {
+            return securityUser.getUser().getDeptId();
+        }
+        return null;
+    }
+
+    /**
+     * 获取当前用户部门名称
+     */
+    public String getCurrentUserDeptName() {
+        // 从Spring Security获取
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof SecurityUser securityUser) {
+            return securityUser.getUser().getDeptName();
+        }
+        return null;
+    }
 }

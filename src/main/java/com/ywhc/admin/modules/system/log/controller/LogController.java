@@ -3,6 +3,7 @@ package com.ywhc.admin.modules.system.log.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ywhc.admin.common.result.Result;
 import com.ywhc.admin.common.annotation.LogAccess;
+import com.ywhc.admin.common.annotation.DataPermission;
 import com.ywhc.admin.modules.system.log.entity.SysLog;
 import com.ywhc.admin.modules.system.log.dto.LogQueryDTO;
 import com.ywhc.admin.common.enums.OperationType;
@@ -31,6 +32,7 @@ public class LogController {
     @Operation(summary = "分页查询日志列表")
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('system:log:list')")
+    @DataPermission(deptIdColumn = "dept_id", userIdColumn = "user_id")
     public Result<IPage<SysLog>> pageLogs(LogQueryDTO queryDTO) {
         IPage<SysLog> page = logService.pageLogs(queryDTO);
         return Result.success(page);

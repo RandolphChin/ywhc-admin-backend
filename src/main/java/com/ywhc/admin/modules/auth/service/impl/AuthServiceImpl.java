@@ -261,6 +261,8 @@ public class AuthServiceImpl implements AuthService {
         try {
             OnlineUser onlineUser = new OnlineUser();
             onlineUser.setUserId(user.getId());
+            onlineUser.setDeptId(user.getDeptId());
+            onlineUser.setDeptName(user.getDeptName());
             onlineUser.setUsername(user.getUsername());
             onlineUser.setNickname(user.getNickname());
             onlineUser.setAccessToken(accessToken);

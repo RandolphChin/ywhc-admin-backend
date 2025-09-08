@@ -1,7 +1,6 @@
 package com.ywhc.admin.common.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ywhc.admin.common.utils.JwtUtils;
 import com.ywhc.admin.common.annotation.LogAccess;
 import com.ywhc.admin.common.util.SecurityUtils;
 import com.ywhc.admin.modules.system.log.entity.SysLog;
@@ -78,8 +77,15 @@ public class LogAspect {
             // 例如从SecurityContext或JWT token中获取
             String username = securityUtils.getCurrentUsername();
             sysLog.setUsername(username);
-            Long userId =securityUtils.getCurrentUserId();
+            Long userId = securityUtils.getCurrentUserId();
             sysLog.setUserId(userId);
+            sysLog.setCreateBy(userId);
+            
+            // 获取用户部门信息
+            Long deptId = securityUtils.getCurrentUserDeptId();
+            String deptName = securityUtils.getCurrentUserDeptName();
+            sysLog.setDeptId(deptId);
+            sysLog.setDeptName(deptName);
         } catch (Exception e) {
             log.warn("获取当前用户信息失败: {}", e.getMessage());
         }

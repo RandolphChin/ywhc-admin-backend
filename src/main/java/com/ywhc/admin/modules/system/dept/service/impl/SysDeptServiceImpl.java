@@ -2,6 +2,7 @@ package com.ywhc.admin.modules.system.dept.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ywhc.admin.common.util.SecurityUtils;
 import com.ywhc.admin.modules.system.dept.dto.DeptQueryDTO;
 import com.ywhc.admin.modules.system.dept.dto.DeptSaveDTO;
 import com.ywhc.admin.modules.system.dept.entity.SysDept;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 
 /**
  * 系统部门服务实现类
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -31,7 +32,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
 
     private final SysDeptMapper baseMapper;
     private final RoleService roleService;
-
+    private final SecurityUtils securityUtils;
     @Override
     public List<DeptTreeVO> getDeptTree(DeptQueryDTO queryDTO) {
         LambdaQueryWrapper<SysDept> wrapper = new LambdaQueryWrapper<>();
@@ -43,7 +44,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
 
         List<SysDept> deptList = list(wrapper);
         List<DeptTreeVO> deptVOList = deptList.stream().map(this::convertToVO).collect(Collectors.toList());
-        
+
         return buildDeptTree(deptVOList, 0L);
     }
 
@@ -66,7 +67,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
 
         SysDept dept = new SysDept();
         BeanUtils.copyProperties(saveDTO, dept);
-        
+
         // 设置祖级列表
         if (saveDTO.getParentId() != null && saveDTO.getParentId() != 0) {
             SysDept parentDept = getById(saveDTO.getParentId());
@@ -160,7 +161,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
         }
 
         Set<Long> deptIds = new HashSet<>();
-        
+
         for (SysRole role : roles) {
             Integer dataScope = role.getDataScope();
             if (dataScope == null) {
@@ -206,7 +207,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
         List<SysDept> deptList = list(new LambdaQueryWrapper<SysDept>()
                 .eq(SysDept::getStatus, 1)
                 .orderByAsc(SysDept::getSortOrder));
-        
+
         List<DeptTreeVO> deptVOList = deptList.stream().map(this::convertToVO).collect(Collectors.toList());
         return buildDeptTree(deptVOList, 0L);
     }
@@ -230,7 +231,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
      */
     private List<DeptTreeVO> buildDeptTree(List<DeptTreeVO> deptList, Long parentId) {
         List<DeptTreeVO> tree = new ArrayList<>();
-        
+
         for (DeptTreeVO dept : deptList) {
             if (Objects.equals(dept.getParentId(), parentId)) {
                 List<DeptTreeVO> children = buildDeptTree(deptList, dept.getId());
@@ -239,7 +240,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
                 tree.add(dept);
             }
         }
-        
+
         return tree;
     }
 
@@ -249,7 +250,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
     private DeptTreeVO convertToVO(SysDept dept) {
         DeptTreeVO vo = new DeptTreeVO();
         BeanUtils.copyProperties(dept, vo);
-        
+
         // 设置部门类型名称
         if (dept.getDeptType() != null) {
             switch (dept.getDeptType()) {
@@ -264,12 +265,12 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
                     break;
             }
         }
-        
+
         // 设置状态名称
         if (dept.getStatus() != null) {
             vo.setStatusName(dept.getStatus() == 1 ? "正常" : "停用");
         }
-        
+
         return vo;
     }
 
@@ -280,14 +281,14 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
         String newAncestors = getAncestors(dept.getParentId());
         String oldAncestors = oldDept.getAncestors();
         dept.setAncestors(newAncestors);
-        
+
         List<SysDept> children = list(new LambdaQueryWrapper<SysDept>()
                 .like(SysDept::getAncestors, oldDept.getId()));
-        
+
         for (SysDept child : children) {
             child.setAncestors(child.getAncestors().replaceFirst(oldAncestors, newAncestors));
         }
-        
+
         if (!children.isEmpty()) {
             updateBatchById(children);
         }
@@ -300,12 +301,12 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
         if (parentId == null || parentId == 0) {
             return "0";
         }
-        
+
         SysDept parent = getById(parentId);
         if (parent != null) {
             return parent.getAncestors() + "," + parentId;
         }
-        
+
         return "0";
     }
 
@@ -321,9 +322,6 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
      * 获取用户部门ID
      */
     private Long getUserDeptId(Long userId) {
-        // 这里需要在SysUser实体中添加deptId字段
-        // SysUser user = userService.getById(userId);
-        // return user != null ? user.getDeptId() : null;
-        return null; // 临时返回null，需要在用户实体中添加部门字段
+        return securityUtils.getCurrentUserDeptId();
     }
 }

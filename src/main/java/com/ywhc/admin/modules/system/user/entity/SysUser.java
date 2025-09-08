@@ -93,6 +93,12 @@ public class SysUser implements Serializable {
     private Long deptId;
 
     /**
+     * 部门名称（非数据库字段，用于关联查询）
+     */
+    @TableField(exist = false)
+    private String deptName;
+
+    /**
      * 备注
      */
     @TableField("remark")
