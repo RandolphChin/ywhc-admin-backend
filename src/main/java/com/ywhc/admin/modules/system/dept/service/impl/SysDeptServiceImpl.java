@@ -2,6 +2,7 @@ package com.ywhc.admin.modules.system.dept.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ywhc.admin.common.enums.DataScopeType;
 import com.ywhc.admin.common.util.SecurityUtils;
 import com.ywhc.admin.modules.system.dept.dto.DeptQueryDTO;
 import com.ywhc.admin.modules.system.dept.dto.DeptSaveDTO;
@@ -168,27 +169,28 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
                 continue;
             }
 
-            switch (dataScope) {
-                case 1: // 全部数据权限
+            DataScopeType dataScopeType = DataScopeType.fromCode(dataScope);
+            switch (dataScopeType) {
+                case ALL_DATA:
                     return new HashSet<>(getAllDeptIds());
-                case 2: // 自定部门数据权限：根据角色关联的部门
+                case CUSTOM_DEPT:
                     List<Long> roleDeptIds = getDeptIdsByRoleId(role.getId());
                     deptIds.addAll(roleDeptIds);
                     break;
-                case 3: // 本部门数据权限
+                case CURRENT_DEPT:
                     Long userDeptId = getUserDeptId(userId);
                     if (userDeptId != null) {
                         deptIds.add(userDeptId);
                     }
                     break;
-                case 4: // 本部门及以下数据权限
+                case CURRENT_AND_SUB_DEPT:
                     Long userDeptId2 = getUserDeptId(userId);
                     if (userDeptId2 != null) {
                         List<Long> childrenIds = getChildrenDeptIds(userDeptId2);
                         deptIds.addAll(childrenIds);
                     }
                     break;
-                case 5: // 仅本人数据权限
+                case SELF_ONLY:
                     // 返回空列表，表示只能看到自己的数据
                     return new HashSet<>();
             }

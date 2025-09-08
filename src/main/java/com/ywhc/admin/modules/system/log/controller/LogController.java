@@ -32,7 +32,8 @@ public class LogController {
     @Operation(summary = "分页查询日志列表")
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('system:log:list')")
-    @DataPermission(deptIdColumn = "dept_id", userIdColumn = "user_id")
+    // @DataPermission(deptIdColumn = "dept_id", userIdColumn = "user_id")
+    @DataPermission(deptIdColumn = "dept_id")
     public Result<IPage<SysLog>> pageLogs(LogQueryDTO queryDTO) {
         IPage<SysLog> page = logService.pageLogs(queryDTO);
         return Result.success(page);

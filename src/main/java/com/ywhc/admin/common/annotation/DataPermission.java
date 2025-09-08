@@ -20,7 +20,7 @@ data_scope	权限范围	生成的SQL条件
 
 
 1. 单表查询时的 @DataPermission 配置
-方式一：不设置别名
+不设置别名，deptAlias 不设置
 @DataPermission(deptIdColumn = "dept_id", userIdColumn = "user_id")
 
 @DataPermission(deptAlias = "sl", userAlias = "sl", deptIdColumn = "dept_id", userIdColumn = "user_id")
@@ -35,22 +35,22 @@ data_scope	权限范围	生成的SQL条件
 public @interface DataPermission {
 
     /**
-     * 部门表别名 （联表查询 LEFT JOIN sys_dept 别名）
+     * 部门表别名 （联表查询 LEFT JOIN sys_dept 别名）,查询SQL中没有 JOIN 不使用
      */
     String deptAlias() default "";
 
     /**
-     * 部门字段名
+     * 部门字段名（业务表中使用哪个字段，对应 sys_dept中的主键），按照部门级数据过滤
      */
     String deptIdColumn() default "dept_id";
 
     /**
-     * 用户表别名
+     * 用户表别名   （联表查询 LEFT JOIN sys_user 别名）,查询SQL中没有 JOIN 不使用
      */
     String userAlias() default "";
 
     /**
-     * 用户字段名
+     * 用户字段名（业务表中使用哪个字段，对应sys_user中的主键）
      */
     String userIdColumn() default "create_by";
 
