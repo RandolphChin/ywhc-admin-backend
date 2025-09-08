@@ -5,9 +5,9 @@ import com.ywhc.admin.common.context.DataScopeContextHolder;
 import com.ywhc.admin.common.util.SecurityUtils;
 import com.ywhc.admin.modules.system.dept.service.SysDeptService;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import java.util.Set;
@@ -30,10 +30,15 @@ public class DataPermissionAspect {
     /**
      * 数据权限处理
      */
-    @Before("@annotation(dataPermission)")
-    public void doBefore(JoinPoint point, DataPermission dataPermission) {
-        clearDataScope();
-        handleDataScope(dataPermission);
+    @Around("@annotation(dataPermission)")
+    public Object doAround(ProceedingJoinPoint point, DataPermission dataPermission) throws Throwable {
+        try {
+            clearDataScope();
+            handleDataScope(dataPermission);
+            return point.proceed();
+        } finally {
+            clearDataScope();
+        }
     }
 
     /**

@@ -118,11 +118,13 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 <!--
+Java 8 时间 API 支持：专门处理 JSR-310 时间类型（Java 8 引入的新时间 API）
+时间类型序列化：支持 LocalDate、LocalDateTime、LocalTime、ZonedDateTime 等类型
+-->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
--->
 
         <!-- API Documentation -->
         <dependency>
