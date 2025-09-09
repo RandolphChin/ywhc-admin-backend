@@ -32,11 +32,25 @@ public class DataPermissionAspect {
      */
     @Around("@annotation(dataPermission)")
     public Object doAround(ProceedingJoinPoint point, DataPermission dataPermission) throws Throwable {
-        try {
-            clearDataScope();
+        // JDK 21: 使用 try-with-resources 的自定义资源管理
+        try (var dataScopeManager = new DataScopeManager()) {
             handleDataScope(dataPermission);
             return point.proceed();
-        } finally {
+        }
+    }
+
+    /**
+     * 数据权限范围管理器 - 实现 AutoCloseable 接口
+     * JDK 21: 使用内部类实现资源管理
+     */
+    private final class DataScopeManager implements AutoCloseable {
+        
+        public DataScopeManager() {
+            clearDataScope();
+        }
+        
+        @Override
+        public void close() {
             clearDataScope();
         }
     }
