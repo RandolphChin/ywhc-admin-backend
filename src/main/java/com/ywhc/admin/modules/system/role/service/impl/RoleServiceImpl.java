@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ywhc.admin.common.result.ResultCode;
+import com.ywhc.admin.common.util.PageConverter;
+import com.ywhc.admin.common.util.ListConverter;
 import com.ywhc.admin.modules.system.role.dto.RoleCreateDTO;
 import com.ywhc.admin.modules.system.role.dto.RoleUpdateDTO;
 import com.ywhc.admin.modules.system.role.entity.SysRole;
@@ -49,15 +51,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
 
         IPage<SysRole> rolePage = this.page(page, wrapper);
 
-        // 转换为VO
-        List<RoleVO> roleVOList = rolePage.getRecords().stream()
-                .map(this::convertToVO)
-                .collect(Collectors.toList());
-
-        Page<RoleVO> voPage = new Page<>(rolePage.getCurrent(), rolePage.getSize(), rolePage.getTotal());
-        voPage.setRecords(roleVOList);
-
-        return voPage;
+        // 使用 PageConverter 转换为VO
+        return PageConverter.convert(rolePage, this::convertToVO);
     }
 
     @Override
@@ -67,9 +62,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
                .orderByAsc(SysRole::getSortOrder);
 
         List<SysRole> roles = this.list(wrapper);
-        return roles.stream()
-                .map(this::convertToVO)
-                .collect(Collectors.toList());
+        return ListConverter.convert(roles, this::convertToVO);
     }
 
     @Override

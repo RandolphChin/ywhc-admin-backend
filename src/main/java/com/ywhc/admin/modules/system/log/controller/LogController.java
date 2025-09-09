@@ -8,6 +8,7 @@ import com.ywhc.admin.modules.system.log.entity.SysLog;
 import com.ywhc.admin.modules.system.log.dto.LogQueryDTO;
 import com.ywhc.admin.common.enums.OperationType;
 import com.ywhc.admin.modules.system.log.service.LogService;
+import com.ywhc.admin.modules.system.log.vo.LogVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +35,8 @@ public class LogController {
     @PreAuthorize("hasAuthority('system:log:list')")
     // @DataPermission(deptIdColumn = "dept_id", userIdColumn = "user_id")
     @DataPermission(deptIdColumn = "dept_id")
-    public Result<IPage<SysLog>> pageLogs(LogQueryDTO queryDTO) {
-        IPage<SysLog> page = logService.pageLogs(queryDTO);
+    public Result<IPage<LogVO>> pageLogs(LogQueryDTO queryDTO) {
+        IPage<LogVO> page = logService.pageLogs(queryDTO);
         return Result.success(page);
     }
 

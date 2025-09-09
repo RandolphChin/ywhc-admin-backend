@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ywhc.admin.common.result.ResultCode;
+import com.ywhc.admin.common.util.PageConverter;
 import com.ywhc.admin.modules.system.user.dto.UserCreateDTO;
 import com.ywhc.admin.modules.system.user.dto.UserQueryDTO;
 import com.ywhc.admin.modules.system.user.dto.UserUpdateDTO;
@@ -57,15 +58,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
 
         IPage<SysUser> userPage = this.page(page, wrapper);
 
-        // 转换为VO
-        List<UserVO> userVOList = userPage.getRecords().stream()
-                .map(this::convertToVO)
-                .collect(Collectors.toList());
-
-        Page<UserVO> voPage = new Page<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
-        voPage.setRecords(userVOList);
-
-        return voPage;
+        // 使用 PageConverter 转换为VO
+        return PageConverter.convert(userPage, this::convertToVO);
     }
 
     @Override

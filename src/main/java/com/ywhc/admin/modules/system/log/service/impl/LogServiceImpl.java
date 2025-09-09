@@ -4,13 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ywhc.admin.common.util.PageConverter;
 import com.ywhc.admin.modules.system.log.entity.SysLog;
 import com.ywhc.admin.modules.system.log.dto.LogQueryDTO;
 import com.ywhc.admin.modules.system.log.mapper.LogMapper;
 import com.ywhc.admin.modules.system.log.service.LogService;
+import com.ywhc.admin.modules.system.log.vo.LogVO;
 import com.ywhc.admin.common.util.QueryProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,9 +28,11 @@ import org.springframework.stereotype.Service;
 public class LogServiceImpl extends ServiceImpl<LogMapper, SysLog> implements LogService {
 
     @Override
-    public IPage<SysLog> pageLogs(LogQueryDTO queryDTO) {
+    public IPage<LogVO> pageLogs(LogQueryDTO queryDTO) {
         Page<SysLog> page = new Page<>(queryDTO.getCurrent(), queryDTO.getSize());
-        return this.page(page, QueryProcessor.createQueryWrapper(queryDTO));
+        Page<SysLog> logPage = this.page(page, QueryProcessor.createQueryWrapper(queryDTO));
+        Page<LogVO> pageVO = PageConverter.convert(logPage, this::convertToVO);
+        return pageVO;
     }
 
     @Override
@@ -42,5 +47,11 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, SysLog> implements Lo
     @Override
     public void clearLogs() {
         this.remove(new LambdaQueryWrapper<>());
+    }
+
+    private LogVO convertToVO(SysLog sysLog){
+        LogVO vo = new LogVO();
+        BeanUtils.copyProperties(sysLog, vo);
+        return vo;
     }
 }
