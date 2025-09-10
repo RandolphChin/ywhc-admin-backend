@@ -39,12 +39,6 @@ public class SysDictType implements Serializable {
     private String dictType;
 
     /**
-     * 状态：0-停用，1-正常
-     */
-    @TableField("status")
-    private Integer status;
-
-    /**
      * 备注
      */
     @TableField("remark")

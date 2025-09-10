@@ -38,7 +38,7 @@ public class DictDataServiceImpl extends ServiceImpl<DictDataMapper, SysDictData
         wrapper.eq(StringUtils.hasText(queryDTO.getDictType()), SysDictData::getDictType, queryDTO.getDictType())
                .like(StringUtils.hasText(queryDTO.getDictLabelLike()), SysDictData::getDictLabel, queryDTO.getDictLabelLike())
                .like(StringUtils.hasText(queryDTO.getDictValueLike()), SysDictData::getDictValue, queryDTO.getDictValueLike())
-               .eq(queryDTO.getStatus() != null, SysDictData::getStatus, queryDTO.getStatus());
+             ;
 
         // 排序
         if (StringUtils.hasText(queryDTO.getOrderBy())) {
@@ -65,7 +65,7 @@ public class DictDataServiceImpl extends ServiceImpl<DictDataMapper, SysDictData
     public List<DictDataVO> getDictDataByType(String dictType) {
         LambdaQueryWrapper<SysDictData> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysDictData::getDictType, dictType)
-               .eq(SysDictData::getStatus, 1)
+               //.eq(SysDictData::getStatus, 1)
                .orderByAsc(SysDictData::getDictSort);
 
         List<SysDictData> dictDataList = this.list(wrapper);
@@ -77,7 +77,7 @@ public class DictDataServiceImpl extends ServiceImpl<DictDataMapper, SysDictData
         LambdaQueryWrapper<SysDictData> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysDictData::getDictType, dictType)
                .eq(SysDictData::getDictValue, dictValue)
-               .eq(SysDictData::getStatus, 1);
+               ;
 
         SysDictData dictData = this.getOne(wrapper);
         return dictData != null ? dictData.getDictLabel() : dictValue;

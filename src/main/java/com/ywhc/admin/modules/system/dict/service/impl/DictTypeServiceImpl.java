@@ -40,7 +40,7 @@ public class DictTypeServiceImpl extends ServiceImpl<DictTypeMapper, SysDictType
         LambdaQueryWrapper<SysDictType> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(StringUtils.hasText(queryDTO.getDictNameLike()), SysDictType::getDictName, queryDTO.getDictNameLike())
                .like(StringUtils.hasText(queryDTO.getDictTypeLike()), SysDictType::getDictType, queryDTO.getDictTypeLike())
-               .eq(queryDTO.getStatus() != null, SysDictType::getStatus, queryDTO.getStatus());
+               ;
 
         // 排序
         if (StringUtils.hasText(queryDTO.getOrderBy())) {
@@ -66,7 +66,7 @@ public class DictTypeServiceImpl extends ServiceImpl<DictTypeMapper, SysDictType
     @Override
     public List<DictTypeVO> getAllDictTypes() {
         LambdaQueryWrapper<SysDictType> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysDictType::getStatus, 1)
+        wrapper//.eq(SysDictType::getStatus, 1)
                .orderByAsc(SysDictType::getDictType);
 
         List<SysDictType> dictTypes = this.list(wrapper);

@@ -30,9 +30,6 @@ public class DictDataVO {
     @Schema(description = "字典类型")
     private String dictType;
 
-    @Schema(description = "状态：0-停用，1-正常")
-    private Integer status;
-
     @Schema(description = "备注")
     private String remark;
 
