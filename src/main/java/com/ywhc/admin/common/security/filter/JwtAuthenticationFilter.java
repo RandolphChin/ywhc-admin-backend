@@ -1,7 +1,12 @@
 package com.ywhc.admin.common.security.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.ywhc.admin.common.result.Result;
+import com.ywhc.admin.common.result.ResultCode;
 import com.ywhc.admin.common.security.service.UserDetailsServiceImpl;
 import com.ywhc.admin.common.utils.JwtUtils;
+import com.ywhc.admin.modules.monitor.online.entity.OnlineUser;
 import com.ywhc.admin.modules.monitor.online.service.OnlineUserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -41,6 +46,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain
     ) throws ServletException, IOException {
+        // 获取请求路径
+        String requestPath = request.getServletPath();
+        
+        // 刷新token接口不需要进行Redis token存在性校验，因为刷新时原token可能已失效
+        boolean isRefreshTokenRequest = "/auth/refresh".equals(requestPath);
+        
         // 获取Token
         String token = getTokenFromRequest(request);
 
@@ -60,6 +71,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (jwtUtils.isValidToken(token)) {
                     // 从Token中获取用户名
                     String username = jwtUtils.getUsernameFromToken(token);
+
+                    // 新增：检查token是否在Redis中存在（刷新token接口跳过此检查）
+                    if (!isRefreshTokenRequest) {
+                        OnlineUser onlineUser = onlineUserService.getOnlineUserByToken(token);
+                        if (onlineUser == null) {
+                            log.warn("Token在Redis中不存在，可能已被清理 - username: {}, token: {}, ip: {}",
+                                username, maskToken(token), request.getRemoteAddr());
+                            
+                            // 使用统一Result格式返回401响应
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json;charset=UTF-8");
+                            
+                            Result<Object> result = Result.error(ResultCode.UNAUTHORIZED);
+                            
+                            // 配置ObjectMapper支持Java8时间类型
+                            ObjectMapper objectMapper = new ObjectMapper();
+                            objectMapper.registerModule(new JavaTimeModule());
+                            
+                            String json = objectMapper.writeValueAsString(result);
+                            response.getWriter().write(json);
+                            return;
+                        }
+
+                        // 记录Redis token验证通过的日志
+                        log.debug("Redis token验证通过 - username: {}, 最后访问时间: {}",
+                            username, onlineUser.getLastAccessTime());
+                    } else {
+                        log.debug("刷新token请求，跳过Redis存在性校验 - username: {}, token: {}",
+                            username, maskToken(token));
+                    }
 
                     // 加载用户详情
                     UserDetails userDetails =
@@ -86,8 +127,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             authentication
                         );
 
-                        // 更新用户最后活动时间
-                        onlineUserService.updateLastAccessTime(token);
+                        // 更新用户最后活动时间（刷新token请求跳过此操作）
+                        if (!isRefreshTokenRequest) {
+                            onlineUserService.updateLastAccessTime(token);
+                        }
 
                         log.debug("用户 {} 认证成功", username);
                     }
