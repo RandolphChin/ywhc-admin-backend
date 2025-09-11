@@ -7,7 +7,7 @@ import lombok.Data;
 
 /**
  * 字典类型创建DTO
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -22,10 +22,6 @@ public class DictTypeCreateDTO {
     @NotBlank(message = "字典类型不能为空")
     @Schema(description = "字典类型", example = "sys_user_sex")
     private String dictType;
-
-    @NotNull(message = "状态不能为空")
-    @Schema(description = "状态：0-停用，1-正常", example = "1")
-    private Integer status;
 
     @Schema(description = "备注", example = "用户性别列表")
     private String remark;

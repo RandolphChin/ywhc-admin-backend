@@ -7,7 +7,7 @@ import lombok.Data;
 
 /**
  * 字典数据更新DTO
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -33,19 +33,6 @@ public class DictDataUpdateDTO {
     @NotBlank(message = "字典类型不能为空")
     @Schema(description = "字典类型", example = "sys_user_sex")
     private String dictType;
-
-    @Schema(description = "样式属性", example = "")
-    private String cssClass;
-
-    @Schema(description = "表格回显样式", example = "primary")
-    private String listClass;
-
-    @Schema(description = "是否默认：0-否，1-是", example = "0")
-    private Integer isDefault = 0;
-
-    @NotNull(message = "状态不能为空")
-    @Schema(description = "状态：0-停用，1-正常", example = "1")
-    private Integer status;
 
     @Schema(description = "备注", example = "性别男")
     private String remark;
