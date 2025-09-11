@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ywhc.admin.common.util.PageConverter;
+import com.ywhc.admin.common.util.QueryProcessor;
 import com.ywhc.admin.modules.system.dict.dto.DictTypeCreateDTO;
 import com.ywhc.admin.modules.system.dict.dto.DictTypeQueryDTO;
 import com.ywhc.admin.modules.system.dict.dto.DictTypeUpdateDTO;
@@ -36,30 +38,8 @@ public class DictTypeServiceImpl extends ServiceImpl<DictTypeMapper, SysDictType
     @Override
     public IPage<DictTypeVO> pageDictTypes(DictTypeQueryDTO queryDTO) {
         Page<SysDictType> page = new Page<>(queryDTO.getCurrent(), queryDTO.getSize());
-
-        LambdaQueryWrapper<SysDictType> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(StringUtils.hasText(queryDTO.getDictNameLike()), SysDictType::getDictName, queryDTO.getDictNameLike())
-               .like(StringUtils.hasText(queryDTO.getDictTypeLike()), SysDictType::getDictType, queryDTO.getDictTypeLike())
-               ;
-
-        // 排序
-        if (StringUtils.hasText(queryDTO.getOrderBy())) {
-            if ("desc".equalsIgnoreCase(queryDTO.getOrderDirection())) {
-               // wrapper.orderByDesc(getColumnByField(queryDTO.getOrderBy()));
-            } else {
-              //  wrapper.orderByAsc(getColumnByField(queryDTO.getOrderBy()));
-            }
-        } else {
-           // wrapper.orderByDesc(SysDictType::getCreateTime);
-        }
-
-        IPage<SysDictType> dictTypePage = this.page(page, wrapper);
-
-        // 转换为VO
-        IPage<DictTypeVO> voPage = new Page<>(dictTypePage.getCurrent(), dictTypePage.getSize(), dictTypePage.getTotal());
-        List<DictTypeVO> voList = dictTypePage.getRecords().stream().map(this::convertToVO).collect(Collectors.toList());
-        voPage.setRecords(voList);
-
+        IPage<SysDictType> dictTypePage = this.page(page, QueryProcessor.createQueryWrapper(queryDTO));
+        Page<DictTypeVO> voPage = PageConverter.convert(dictTypePage, this::convertToVO);
         return voPage;
     }
 
@@ -153,22 +133,5 @@ public class DictTypeServiceImpl extends ServiceImpl<DictTypeMapper, SysDictType
         DictTypeVO vo = new DictTypeVO();
         BeanUtils.copyProperties(dictType, vo);
         return vo;
-    }
-
-    private String getColumnByField(String field) {
-        switch (field) {
-            case "dictName":
-                return "dict_name";
-            case "dictType":
-                return "dict_type";
-            case "status":
-                return "status";
-            case "createTime":
-                return "create_time";
-            case "updateTime":
-                return "update_time";
-            default:
-                return "create_time";
-        }
     }
 }
