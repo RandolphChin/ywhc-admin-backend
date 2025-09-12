@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * 部门查询DTO
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -28,11 +28,6 @@ public class DeptQueryDTO extends BaseQueryDTO {
      * 部门类型
      */
     private Integer deptType;
-
-    /**
-     * 负责人姓名
-     */
-    private String leaderName;
 
     /**
      * 状态

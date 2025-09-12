@@ -40,7 +40,6 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
         wrapper.like(StringUtils.hasText(queryDTO.getDeptName()), SysDept::getDeptName, queryDTO.getDeptName())
                 .eq(queryDTO.getStatus() != null, SysDept::getStatus, queryDTO.getStatus())
                 .eq(queryDTO.getDeptType() != null, SysDept::getDeptType, queryDTO.getDeptType())
-                .like(StringUtils.hasText(queryDTO.getLeaderName()), SysDept::getLeaderName, queryDTO.getLeaderName())
                 .orderByAsc(SysDept::getSortOrder);
 
         List<SysDept> deptList = list(wrapper);

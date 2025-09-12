@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 
 /**
  * 部门保存DTO
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -41,26 +41,6 @@ public class DeptSaveDTO {
      */
     @NotNull(message = "部门类型不能为空")
     private Integer deptType;
-
-    /**
-     * 负责人ID
-     */
-    private Long leaderId;
-
-    /**
-     * 负责人姓名
-     */
-    private String leaderName;
-
-    /**
-     * 联系电话
-     */
-    private String phone;
-
-    /**
-     * 邮箱
-     */
-    private String email;
 
     /**
      * 排序

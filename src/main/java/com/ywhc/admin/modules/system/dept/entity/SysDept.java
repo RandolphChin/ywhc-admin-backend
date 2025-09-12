@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 /**
  * 系统部门实体类
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -49,30 +49,6 @@ public class SysDept implements Serializable {
      */
     @TableField("dept_type")
     private Integer deptType;
-
-    /**
-     * 负责人ID
-     */
-    @TableField("leader_id")
-    private Long leaderId;
-
-    /**
-     * 负责人姓名
-     */
-    @TableField("leader_name")
-    private String leaderName;
-
-    /**
-     * 联系电话
-     */
-    @TableField("phone")
-    private String phone;
-
-    /**
-     * 邮箱
-     */
-    @TableField("email")
-    private String email;
 
     /**
      * 部门层级路径，如：1,2,3

@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * 部门树形结构VO
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -44,26 +44,6 @@ public class DeptTreeVO {
      * 部门类型名称
      */
     private String deptTypeName;
-
-    /**
-     * 负责人ID
-     */
-    private Long leaderId;
-
-    /**
-     * 负责人姓名
-     */
-    private String leaderName;
-
-    /**
-     * 联系电话
-     */
-    private String phone;
-
-    /**
-     * 邮箱
-     */
-    private String email;
 
     /**
      * 部门层级路径
