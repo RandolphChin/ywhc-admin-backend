@@ -1,6 +1,9 @@
 package com.ywhc.admin.modules.system.dept.dto;
 
+import com.ywhc.admin.common.annotation.QueryField;
+import com.ywhc.admin.common.annotation.QueryType;
 import com.ywhc.admin.common.dto.BaseQueryDTO;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,6 +15,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@Schema(description = "部门查询条件")
 public class DeptQueryDTO extends BaseQueryDTO {
 
     /**
@@ -22,6 +26,7 @@ public class DeptQueryDTO extends BaseQueryDTO {
     /**
      * 部门编码
      */
+    @QueryField(column = "dept_code", type = QueryType.EQUAL)
     private String deptCode;
 
     /**
