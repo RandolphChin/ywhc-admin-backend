@@ -191,7 +191,7 @@ public class JwtUtils {
     }
 
     /**
-     *  获取Token过期时长
+     * 获取Token过期时长
      */
     public Long getExpiration() {
         return expiration;

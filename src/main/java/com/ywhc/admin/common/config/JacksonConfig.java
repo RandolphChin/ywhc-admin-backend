@@ -3,6 +3,7 @@ package com.ywhc.admin.common.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -26,6 +27,9 @@ public class JacksonConfig {
     @Primary
     public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
         ObjectMapper objectMapper = builder.createXmlMapper(false).build();
+        
+        // 注册JavaTimeModule以支持LocalDateTime等Java8时间类型
+        objectMapper.registerModule(new JavaTimeModule());
         
         // 创建自定义模块
         SimpleModule simpleModule = new SimpleModule();

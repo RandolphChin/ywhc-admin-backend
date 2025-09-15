@@ -1,7 +1,6 @@
 package com.ywhc.admin.common.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ywhc.admin.common.result.Result;
 import com.ywhc.admin.common.result.ResultCode;
 import com.ywhc.admin.common.security.service.UserDetailsServiceImpl;
@@ -37,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
     private final UserDetailsServiceImpl userDetailsService;
     private final OnlineUserService onlineUserService;
+    private final ObjectMapper objectMapper;
 
     private static final String TOKEN_HEADER = "Authorization";
 
@@ -85,9 +85,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             
                             Result<Object> result = Result.error(ResultCode.UNAUTHORIZED);
                             
-                            // 配置ObjectMapper支持Java8时间类型
-                            ObjectMapper objectMapper = new ObjectMapper();
-                            objectMapper.registerModule(new JavaTimeModule());
+                            // 使用Spring管理的ObjectMapper
                             
                             String json = objectMapper.writeValueAsString(result);
                             response.getWriter().write(json);
