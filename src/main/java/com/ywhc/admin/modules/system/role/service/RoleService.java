@@ -3,6 +3,7 @@ package com.ywhc.admin.modules.system.role.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ywhc.admin.modules.system.role.dto.RoleCreateDTO;
+import com.ywhc.admin.modules.system.role.dto.RoleQueryDTO;
 import com.ywhc.admin.modules.system.role.dto.RoleUpdateDTO;
 import com.ywhc.admin.modules.system.role.entity.SysRole;
 import com.ywhc.admin.modules.system.role.vo.RoleVO;
@@ -20,7 +21,7 @@ public interface RoleService extends IService<SysRole> {
     /**
      * 分页查询角色列表
      */
-    IPage<RoleVO> pageRoles(Long current, Long size, String roleName, String roleKey, Integer status);
+    IPage<RoleVO> pageRoles(RoleQueryDTO queryDTO);
 
     /**
      * 获取所有角色列表

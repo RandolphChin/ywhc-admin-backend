@@ -5,6 +5,7 @@ import com.ywhc.admin.common.result.Result;
 import com.ywhc.admin.common.annotation.LogAccess;
 import com.ywhc.admin.common.enums.OperationType;
 import com.ywhc.admin.modules.system.role.dto.RoleCreateDTO;
+import com.ywhc.admin.modules.system.role.dto.RoleQueryDTO;
 import com.ywhc.admin.modules.system.role.dto.RoleUpdateDTO;
 import com.ywhc.admin.modules.system.role.service.RoleService;
 import com.ywhc.admin.modules.system.role.vo.RoleVO;
@@ -35,13 +36,8 @@ public class RoleController {
     @Operation(summary = "分页查询角色列表")
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('system:role:list')")
-    public Result<IPage<RoleVO>> pageRoles(
-            @Parameter(description = "当前页") @RequestParam(defaultValue = "1") Long current,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") Long size,
-            @Parameter(description = "角色名称") @RequestParam(required = false) String roleName,
-            @Parameter(description = "角色标识") @RequestParam(required = false) String roleKey,
-            @Parameter(description = "状态") @RequestParam(required = false) Integer status) {
-        IPage<RoleVO> page = roleService.pageRoles(current, size, roleName, roleKey, status);
+    public Result<IPage<RoleVO>> pageRoles(RoleQueryDTO queryDTO) {
+        IPage<RoleVO> page = roleService.pageRoles(queryDTO);
         return Result.success(page);
     }
 

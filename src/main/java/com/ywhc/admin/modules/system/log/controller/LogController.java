@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ywhc.admin.common.result.Result;
 import com.ywhc.admin.common.annotation.LogAccess;
 import com.ywhc.admin.common.annotation.DataPermission;
-import com.ywhc.admin.modules.system.log.entity.SysLog;
 import com.ywhc.admin.modules.system.log.dto.LogQueryDTO;
 import com.ywhc.admin.common.enums.OperationType;
 import com.ywhc.admin.modules.system.log.service.LogService;
