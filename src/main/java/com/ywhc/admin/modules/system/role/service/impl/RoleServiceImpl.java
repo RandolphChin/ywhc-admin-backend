@@ -6,13 +6,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ywhc.admin.common.result.ResultCode;
 import com.ywhc.admin.common.util.PageConverter;
+import com.ywhc.admin.common.util.QueryProcessor;
 import com.ywhc.admin.common.util.ListConverter;
 import com.ywhc.admin.modules.system.role.dto.RoleCreateDTO;
+import com.ywhc.admin.modules.system.role.dto.RoleQueryDTO;
 import com.ywhc.admin.modules.system.role.dto.RoleUpdateDTO;
 import com.ywhc.admin.modules.system.role.entity.SysRole;
-import com.ywhc.admin.modules.system.role.entity.SysRoleMenu;
 import com.ywhc.admin.modules.system.role.mapper.RoleMapper;
 import com.ywhc.admin.modules.system.role.service.RoleService;
+import com.ywhc.admin.modules.system.role.service.SysRoleMenuService;
 import com.ywhc.admin.modules.system.role.vo.RoleVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 角色服务实现类
@@ -37,19 +38,12 @@ import java.util.stream.Collectors;
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements RoleService {
 
     private final RoleMapper roleMapper;
-
+    private final SysRoleMenuService sysRoleMenuService;
     @Override
-    public IPage<RoleVO> pageRoles(Long current, Long size, String roleName, String roleKey, Integer status) {
-        Page<SysRole> page = new Page<>(current, size);
+    public IPage<RoleVO> pageRoles(RoleQueryDTO queryDTO) {
+        Page<SysRole> page = new Page<>(queryDTO.getCurrent(), queryDTO.getSize());
 
-        LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(StringUtils.hasText(roleName), SysRole::getRoleName, roleName)
-               .like(StringUtils.hasText(roleKey), SysRole::getRoleKey, roleKey)
-               .eq(status != null, SysRole::getStatus, status)
-               .orderByAsc(SysRole::getSortOrder)
-               .orderByDesc(SysRole::getCreateTime);
-
-        IPage<SysRole> rolePage = this.page(page, wrapper);
+        IPage<SysRole> rolePage = this.page(page, QueryProcessor.createQueryWrapper(queryDTO));
 
         // 使用 PageConverter 转换为VO
         return PageConverter.convert(rolePage, this::convertToVO);
@@ -178,23 +172,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void assignMenus(Long roleId, Long[] menuIds) {
-        // 删除原有权限
-        LambdaQueryWrapper<SysRoleMenu> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysRoleMenu::getRoleId, roleId);
-        // 这里需要RoleMenuService，暂时省略具体实现
-
-        // 添加新权限
-        if (menuIds != null && menuIds.length > 0) {
-            List<SysRoleMenu> roleMenus = Arrays.stream(menuIds)
-                    .map(menuId -> {
-                        SysRoleMenu roleMenu = new SysRoleMenu();
-                        roleMenu.setRoleId(roleId);
-                        roleMenu.setMenuId(menuId);
-                        return roleMenu;
-                    })
-                    .collect(Collectors.toList());
-            // 这里需要RoleMenuService，暂时省略具体实现
-        }
+        // 使用专用的服务方法来分配菜单权限
+        List<Long> menuIdList = menuIds != null ? Arrays.asList(menuIds) : List.of();
+        sysRoleMenuService.assignMenusToRole(roleId, menuIdList);
     }
 
     @Override
