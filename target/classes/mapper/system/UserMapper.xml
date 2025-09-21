@@ -60,4 +60,16 @@
         WHERE mobile = #{mobile} AND deleted = 0
     </select>
 
+    <!-- 获取用户ID对应的角色列表-->
+    <select id="selectRoleInfoByUserId" resultType="com.ywhc.admin.modules.system.role.vo.RoleVO">
+        SELECT
+        sys_user_role.role_id as id,
+        sys_user_role.user_id,
+        sys_role.role_name,
+        sys_role.role_key
+        FROM
+        sys_user_role sys_user_role
+        LEFT JOIN sys_role sys_role ON sys_user_role.role_id = sys_role.id
+        WHERE  sys_user_role.user_id = #{userId}
+    </select>
 </mapper>

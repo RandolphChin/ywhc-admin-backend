@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 角色VO
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -22,6 +22,8 @@ public class RoleVO implements Serializable {
      * 角色ID
      */
     private Long id;
+
+    private Long userId;
 
     /**
      * 角色名称

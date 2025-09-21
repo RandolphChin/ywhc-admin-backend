@@ -6,12 +6,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ywhc.admin.common.result.ResultCode;
 import com.ywhc.admin.common.util.PageConverter;
+import com.ywhc.admin.common.util.QueryProcessor;
+import com.ywhc.admin.modules.system.role.vo.RoleVO;
 import com.ywhc.admin.modules.system.user.dto.UserCreateDTO;
 import com.ywhc.admin.modules.system.user.dto.UserQueryDTO;
 import com.ywhc.admin.modules.system.user.dto.UserUpdateDTO;
 import com.ywhc.admin.modules.system.user.entity.SysUser;
 import com.ywhc.admin.modules.system.user.entity.SysUserRole;
 import com.ywhc.admin.modules.system.user.mapper.UserMapper;
+import com.ywhc.admin.modules.system.user.service.UserRoleService;
 import com.ywhc.admin.modules.system.user.service.UserService;
 import com.ywhc.admin.modules.system.user.vo.UserVO;
 import lombok.RequiredArgsConstructor;
@@ -40,23 +43,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
 
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final UserRoleService userRoleService;
 
     @Override
     public IPage<UserVO> pageUsers(UserQueryDTO queryDTO) {
         Page<SysUser> page = new Page<>(queryDTO.getCurrent(), queryDTO.getSize());
-
-        LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(StringUtils.hasText(queryDTO.getUsername()), SysUser::getUsername, queryDTO.getUsername())
-               .like(StringUtils.hasText(queryDTO.getNickname()), SysUser::getNickname, queryDTO.getNickname())
-               .like(StringUtils.hasText(queryDTO.getEmail()), SysUser::getEmail, queryDTO.getEmail())
-               .like(StringUtils.hasText(queryDTO.getMobile()), SysUser::getMobile, queryDTO.getMobile())
-               .eq(queryDTO.getGender() != null, SysUser::getGender, queryDTO.getGender())
-               .eq(queryDTO.getStatus() != null, SysUser::getStatus, queryDTO.getStatus())
-               .ge(queryDTO.getCreateTimeStart() != null, SysUser::getCreateTime, queryDTO.getCreateTimeStart())
-               .le(queryDTO.getCreateTimeEnd() != null, SysUser::getCreateTime, queryDTO.getCreateTimeEnd())
-               .orderByDesc(SysUser::getCreateTime);
-
-        IPage<SysUser> userPage = this.page(page, wrapper);
+        IPage<SysUser> userPage = this.page(page, QueryProcessor.createQueryWrapper(queryDTO));
 
         // 使用 PageConverter 转换为VO
         return PageConverter.convert(userPage, this::convertToVO);
@@ -185,22 +177,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void assignRoles(Long userId, Long[] roleIds) {
-        // 删除原有角色
-        LambdaQueryWrapper<SysUserRole> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysUserRole::getUserId, userId);
-        // 这里需要UserRoleService，暂时省略具体实现
 
-        // 添加新角色
         if (roleIds != null && roleIds.length > 0) {
-            List<SysUserRole> userRoles = Arrays.stream(roleIds)
-                    .map(roleId -> {
-                        SysUserRole userRole = new SysUserRole();
-                        userRole.setUserId(userId);
-                        userRole.setRoleId(roleId);
-                        return userRole;
-                    })
-                    .collect(Collectors.toList());
-            // 这里需要UserRoleService，暂时省略具体实现
+            userRoleService.reassignUserRoles(userId,Arrays.asList(roleIds));
         }
     }
 
@@ -241,7 +220,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
         // 设置状态描述
         vo.setStatusDesc(getStatusDesc(user.getStatus()));
 
-        // TODO: 设置角色信息，需要查询用户角色关联表
+        // 设置角色信息
+        vo.setRoles(getUserRoleInfo(user.getId()));
 
         return vo;
     }
@@ -263,7 +243,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     private String getStatusDesc(Integer status) {
         return status == 1 ? "正常" : "禁用";
     }
+    private List<UserVO.RoleInfo> getUserRoleInfo(Long userId){
+        List<RoleVO> voList = userMapper.selectRoleInfoByUserId(userId);
+        List<UserVO.RoleInfo> roleInfos = new ArrayList<>();
 
+        // 将 RoleVO 中的属性复制到 UserVO.RoleInfo
+        for (RoleVO roleVO : voList) {
+            UserVO.RoleInfo roleInfo = new UserVO.RoleInfo();
+            roleInfo.setRoleId(roleVO.getId());
+            roleInfo.setRoleName(roleVO.getRoleName());
+            roleInfo.setRoleKey(roleVO.getRoleKey());
+            roleInfos.add(roleInfo);
+        }
+
+        return roleInfos;
+    }
     public static void main(String[] args) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String finalPassword = bCryptPasswordEncoder.encode("admin123");

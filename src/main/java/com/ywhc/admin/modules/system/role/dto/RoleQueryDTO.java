@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Schema(description = "角色查询条件")
 public class RoleQueryDTO extends BaseQueryDTO {
+
     @QueryField(column = "role_name", type = QueryType.LIKE)
     private String roleName;
     @QueryField(column = "role_key", type = QueryType.LIKE)
