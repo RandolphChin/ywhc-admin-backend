@@ -126,6 +126,13 @@ Java 8 时间 API 支持：专门处理 JSR-310 时间类型（Java 8 引入的�
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
+        <!-- 图片处理 - 用于滑块验证码 -->
+       <!-- <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.20</version>
+        </dependency>-->
+
         <!-- API Documentation -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>

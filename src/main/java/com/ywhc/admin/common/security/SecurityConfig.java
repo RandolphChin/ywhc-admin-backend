@@ -72,6 +72,7 @@ public class SecurityConfig {
                 // 公开接口
                 .requestMatchers(
                     "/auth/**",
+                    "/captcha/**",  // 滑块验证码相关接口
                     "/doc.html",
                     "/webjars/**",
                     "/swagger-resources/**",

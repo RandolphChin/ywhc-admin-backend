@@ -39,6 +39,11 @@ public class LoginDTO implements Serializable {
     private String captchaKey;
 
     /**
+     * 滑块验证码token
+     */
+    private String captchaToken;
+
+    /**
      * 记住我
      */
     private Boolean rememberMe = false;

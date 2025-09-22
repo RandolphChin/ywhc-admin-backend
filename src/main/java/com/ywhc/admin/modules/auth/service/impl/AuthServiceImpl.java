@@ -12,6 +12,7 @@ import com.ywhc.admin.modules.monitor.online.service.OnlineUserService;
 import com.ywhc.admin.modules.system.user.entity.SysUser;
 import com.ywhc.admin.modules.system.user.service.UserService;
 import com.ywhc.admin.modules.system.dept.service.SysDeptService;
+import com.ywhc.admin.modules.captcha.service.SlideCaptchaService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -41,6 +42,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtils jwtUtils;
     private final OnlineUserService onlineUserService;
     private final SysDeptService sysDeptService;
+    private final SlideCaptchaService slideCaptchaService;
 
     @Override
     public LoginVO login(
@@ -48,6 +50,16 @@ public class AuthServiceImpl implements AuthService {
         String clientIp,
         HttpServletRequest request
     ) {
+        // 验证滑块验证码
+        if (StringUtils.hasText(loginDTO.getCaptchaToken())) {
+            boolean isValidCaptcha = slideCaptchaService.validateToken(loginDTO.getCaptchaToken());
+            if (!isValidCaptcha) {
+                throw new RuntimeException("验证码已过期或无效，请重新验证");
+            }
+        } else {
+            throw new RuntimeException("请完成滑块验证");
+        }
+        
         // 认证用户
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
