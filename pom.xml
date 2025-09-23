@@ -126,12 +126,6 @@ Java 8 时间 API 支持：专门处理 JSR-310 时间类型（Java 8 引入的�
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
-        <!-- 图片处理 - 用于滑块验证码 -->
-       <!-- <dependency>
-            <groupId>net.coobird</groupId>
-            <artifactId>thumbnailator</artifactId>
-            <version>0.4.20</version>
-        </dependency>-->
 
         <!-- API Documentation -->
         <dependency>
@@ -140,15 +134,6 @@ Java 8 时间 API 支持：专门处理 JSR-310 时间类型（Java 8 引入的�
             <version>${knife4j.version}</version>
         </dependency>
 
-        <!-- Development Tools -->
-        <!--
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
--->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -168,11 +153,6 @@ Java 8 时间 API 支持：专门处理 JSR-310 时间类型（Java 8 引入的�
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
