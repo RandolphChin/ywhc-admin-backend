@@ -73,6 +73,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/auth/**",
                     "/captcha/**",  // 滑块验证码相关接口
+                    "/crypto/public-key",
                     "/doc.html",
                     "/webjars/**",
                     "/swagger-resources/**",
@@ -116,7 +117,7 @@ public class SecurityConfig {
         // 允许的响应头
         configuration.setExposedHeaders(Arrays.asList(
             "Content-Length",
-            "Access-Control-Allow-Origin", 
+            "Access-Control-Allow-Origin",
             "Access-Control-Allow-Headers",
             "Cache-Control",
             "Content-Language",

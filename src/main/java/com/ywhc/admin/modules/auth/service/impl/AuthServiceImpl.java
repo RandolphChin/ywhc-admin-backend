@@ -14,6 +14,7 @@ import com.ywhc.admin.modules.system.user.entity.SysUser;
 import com.ywhc.admin.modules.system.user.service.UserService;
 import com.ywhc.admin.modules.system.dept.service.SysDeptService;
 import com.ywhc.admin.modules.captcha.service.SlideCaptchaService;
+import com.ywhc.admin.common.security.service.RSAKeyService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -46,6 +47,7 @@ public class AuthServiceImpl implements AuthService {
     private final SysDeptService sysDeptService;
     private final SlideCaptchaService slideCaptchaService;
     private final PasswordEncoder passwordEncoder;
+    private final RSAKeyService rsaKeyService;
 
     @Override
     public LoginVO login(
@@ -63,11 +65,41 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("请完成滑块验证");
         }
         
+        // 处理密码解密
+        String actualPassword = loginDTO.getPassword();
+        if (Boolean.TRUE.equals(loginDTO.getEncrypted())) {
+            try {
+                // 解密密码
+                String decryptedData = rsaKeyService.decrypt(loginDTO.getPassword());
+                
+                // 解析解密后的数据：格式为 "password|timestamp"
+                String[] parts = decryptedData.split("\\|");
+                if (parts.length != 2) {
+                    throw new RuntimeException("密码格式错误");
+                }
+                
+                actualPassword = parts[0];
+                long timestamp = Long.parseLong(parts[1]);
+                
+                // 验证时间戳（防重放攻击，允许5分钟内的请求）
+                if (!rsaKeyService.isValidTimestamp(timestamp, 300)) {
+                    throw new RuntimeException("请求已过期，请重新登录");
+                }
+                
+                log.debug("密码解密成功，用户: {}", loginDTO.getUsername());
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("密码格式错误", e);
+            } catch (Exception e) {
+                log.error("密码解密失败: {}", e.getMessage());
+                throw new RuntimeException("密码解密失败，请刷新页面重试", e);
+            }
+        }
+        
         // 认证用户
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 loginDTO.getUsername(),
-                loginDTO.getPassword()
+                actualPassword
             )
         );
 

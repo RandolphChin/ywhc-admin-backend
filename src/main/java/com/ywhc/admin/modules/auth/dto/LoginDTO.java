@@ -23,10 +23,15 @@ public class LoginDTO implements Serializable {
     private String username;
 
     /**
-     * 密码
+     * 密码（可能是明文或加密后的密码）
      */
     @NotBlank(message = "密码不能为空")
     private String password;
+
+    /**
+     * 是否为加密密码
+     */
+    private Boolean encrypted = false;
 
     /**
      * 验证码
