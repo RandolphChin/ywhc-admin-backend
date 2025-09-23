@@ -394,18 +394,57 @@ public class AuthServiceImpl implements AuthService {
 
         SysUser user = securityUser.getUser();
         
+        // 处理密码解密
+        String actualOldPassword = changePasswordDTO.getOldPassword();
+        String actualNewPassword = changePasswordDTO.getNewPassword();
+        
+        if (Boolean.TRUE.equals(changePasswordDTO.getEncrypted())) {
+            try {
+                // 解密原密码
+                String decryptedOldData = rsaKeyService.decrypt(changePasswordDTO.getOldPassword());
+                String[] oldParts = decryptedOldData.split("\\|");
+                if (oldParts.length != 2) {
+                    throw new RuntimeException("原密码格式错误");
+                }
+                actualOldPassword = oldParts[0];
+                long oldTimestamp = Long.parseLong(oldParts[1]);
+                
+                // 解密新密码
+                String decryptedNewData = rsaKeyService.decrypt(changePasswordDTO.getNewPassword());
+                String[] newParts = decryptedNewData.split("\\|");
+                if (newParts.length != 2) {
+                    throw new RuntimeException("新密码格式错误");
+                }
+                actualNewPassword = newParts[0];
+                long newTimestamp = Long.parseLong(newParts[1]);
+                
+                // 验证时间戳（防重放攻击，允许5分钟内的请求）
+                if (!rsaKeyService.isValidTimestamp(oldTimestamp, 300) || 
+                    !rsaKeyService.isValidTimestamp(newTimestamp, 300)) {
+                    throw new RuntimeException("请求已过期，请重新操作");
+                }
+                
+                log.debug("密码解密成功，用户: {}", user.getUsername());
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("密码格式错误", e);
+            } catch (Exception e) {
+                log.error("密码解密失败: {}", e.getMessage());
+                throw new RuntimeException("密码解密失败，请刷新页面重试", e);
+            }
+        }
+        
         // 验证原密码
-        if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(actualOldPassword, user.getPassword())) {
             throw new RuntimeException("原密码不正确");
         }
         
         // 检查新密码是否与原密码相同
-        if (passwordEncoder.matches(changePasswordDTO.getNewPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(actualNewPassword, user.getPassword())) {
             throw new RuntimeException("新密码不能与原密码相同");
         }
         
         // 更新密码
-        String encodedNewPassword = passwordEncoder.encode(changePasswordDTO.getNewPassword());
+        String encodedNewPassword = passwordEncoder.encode(actualNewPassword);
         userService.updatePassword(user.getId(), encodedNewPassword);
         
         log.info("用户 {} 修改密码成功", user.getUsername());

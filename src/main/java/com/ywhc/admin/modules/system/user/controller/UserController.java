@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ywhc.admin.common.result.Result;
 import com.ywhc.admin.common.annotation.LogAccess;
 import com.ywhc.admin.common.enums.OperationType;
+import com.ywhc.admin.modules.system.user.dto.ResetPasswordDTO;
 import com.ywhc.admin.modules.system.user.dto.UserCreateDTO;
 import com.ywhc.admin.modules.system.user.dto.UserQueryDTO;
 import com.ywhc.admin.modules.system.user.dto.UserUpdateDTO;
@@ -93,8 +94,8 @@ public class UserController {
     @PreAuthorize("hasAuthority('system:user:resetPwd')")
     public Result<String> resetPassword(
             @Parameter(description = "用户ID") @PathVariable Long id,
-            @Parameter(description = "新密码") @RequestParam String newPassword) {
-        userService.resetPassword(id, newPassword);
+            @Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
+        userService.resetPassword(id, resetPasswordDTO);
         return Result.success("密码重置成功");
     }
 

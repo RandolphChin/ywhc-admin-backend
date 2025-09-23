@@ -2,6 +2,7 @@ package com.ywhc.admin.modules.system.user.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ywhc.admin.modules.system.user.dto.ResetPasswordDTO;
 import com.ywhc.admin.modules.system.user.dto.UserCreateDTO;
 import com.ywhc.admin.modules.system.user.dto.UserQueryDTO;
 import com.ywhc.admin.modules.system.user.dto.UserUpdateDTO;
@@ -62,7 +63,7 @@ public interface UserService extends IService<SysUser> {
     /**
      * 重置用户密码
      */
-    void resetPassword(Long userId, String newPassword);
+    void resetPassword(Long userId, ResetPasswordDTO resetPasswordDTO);
 
     /**
      * 更新用户密码

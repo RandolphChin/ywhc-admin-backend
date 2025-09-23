@@ -36,7 +36,7 @@ public class CryptoController {
 
         return Result.success("获取公钥成功", data);
     }
-
+/*
     @Operation(summary = "测试RSA加密解密")
     @PostMapping("/test-encrypt")
     public Result<Map<String, Object>> testEncrypt(@RequestBody Map<String, String> request) {
@@ -58,4 +58,5 @@ public class CryptoController {
             return Result.error(ResultCode.SUCCESS.getCode(), e.getMessage());
         }
     }
+    */
 }

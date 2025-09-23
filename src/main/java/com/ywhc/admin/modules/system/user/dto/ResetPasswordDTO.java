@@ -1,4 +1,4 @@
-package com.ywhc.admin.modules.auth.dto;
+package com.ywhc.admin.modules.system.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -8,20 +8,16 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 修改密码DTO
+ * 重置密码DTO
  *
  * @author YWHC Team
  * @since 2024-01-01
  */
 @Data
-@Schema(description = "修改密码DTO")
-public class ChangePasswordDTO implements Serializable {
+@Schema(description = "重置密码DTO")
+public class ResetPasswordDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @Schema(description = "原密码")
-    @NotBlank(message = "原密码不能为空")
-    private String oldPassword;
 
     @Schema(description = "新密码")
     @NotBlank(message = "新密码不能为空")

@@ -7,6 +7,7 @@ import com.ywhc.admin.common.result.ResultCode;
 import com.ywhc.admin.common.util.PageConverter;
 import com.ywhc.admin.common.util.QueryProcessor;
 import com.ywhc.admin.modules.system.role.vo.RoleVO;
+import com.ywhc.admin.modules.system.user.dto.ResetPasswordDTO;
 import com.ywhc.admin.modules.system.user.dto.UserCreateDTO;
 import com.ywhc.admin.modules.system.user.dto.UserQueryDTO;
 import com.ywhc.admin.modules.system.user.dto.UserUpdateDTO;
@@ -23,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import com.ywhc.admin.common.security.service.RSAKeyService;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -41,6 +43,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserRoleService userRoleService;
+    private final RSAKeyService rsaKeyService;
 
     @Override
     public IPage<UserVO> pageUsers(UserQueryDTO queryDTO) {
@@ -152,11 +155,41 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     }
 
     @Override
-    public void resetPassword(Long userId, String newPassword) {
+    public void resetPassword(Long userId, ResetPasswordDTO resetPasswordDTO) {
+        // 处理密码解密
+        String actualNewPassword = resetPasswordDTO.getNewPassword();
+        
+        if (Boolean.TRUE.equals(resetPasswordDTO.getEncrypted())) {
+            try {
+                // 解密新密码
+                String decryptedNewData = rsaKeyService.decrypt(resetPasswordDTO.getNewPassword());
+                String[] newParts = decryptedNewData.split("\\|");
+                if (newParts.length != 2) {
+                    throw new RuntimeException("新密码格式错误");
+                }
+                actualNewPassword = newParts[0];
+                long newTimestamp = Long.parseLong(newParts[1]);
+                
+                // 验证时间戳（防重放攻击，允许5分钟内的请求）
+                if (!rsaKeyService.isValidTimestamp(newTimestamp, 300)) {
+                    throw new RuntimeException("请求已过期，请重新操作");
+                }
+                
+                log.debug("密码解密成功，重置用户ID: {}", userId);
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("密码格式错误", e);
+            } catch (Exception e) {
+                log.error("密码解密失败: {}", e.getMessage());
+                throw new RuntimeException("密码解密失败，请刷新页面重试", e);
+            }
+        }
+        
         SysUser user = new SysUser();
         user.setId(userId);
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(actualNewPassword));
         this.updateById(user);
+        
+        log.info("用户ID {} 密码重置成功", userId);
     }
 
     @Override
