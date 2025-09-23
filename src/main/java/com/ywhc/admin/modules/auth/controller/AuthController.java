@@ -1,6 +1,7 @@
 package com.ywhc.admin.modules.auth.controller;
 
 import com.ywhc.admin.common.result.Result;
+import com.ywhc.admin.modules.auth.dto.ChangePasswordDTO;
 import com.ywhc.admin.modules.auth.dto.LoginDTO;
 import com.ywhc.admin.modules.auth.service.AuthService;
 import com.ywhc.admin.modules.auth.vo.LoginVO;
@@ -56,6 +57,13 @@ public class AuthController {
     public Result<LoginVO> refreshToken(@RequestParam String refreshToken) {
         LoginVO loginVO = authService.refreshToken(refreshToken);
         return Result.success("Token刷新成功", loginVO);
+    }
+
+    @Operation(summary = "修改密码")
+    @PutMapping("/change-password")
+    public Result<String> changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO) {
+        authService.changePassword(changePasswordDTO);
+        return Result.success("密码修改成功");
     }
 
     /**

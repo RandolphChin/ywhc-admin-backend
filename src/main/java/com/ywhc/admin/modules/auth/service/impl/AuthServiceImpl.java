@@ -3,6 +3,7 @@ package com.ywhc.admin.modules.auth.service.impl;
 import com.ywhc.admin.common.result.ResultCode;
 import com.ywhc.admin.common.security.service.SecurityUser;
 import com.ywhc.admin.common.utils.JwtUtils;
+import com.ywhc.admin.modules.auth.dto.ChangePasswordDTO;
 import com.ywhc.admin.modules.auth.dto.LoginDTO;
 import com.ywhc.admin.modules.auth.service.AuthService;
 import com.ywhc.admin.modules.auth.vo.LoginVO;
@@ -23,6 +24,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -43,6 +45,7 @@ public class AuthServiceImpl implements AuthService {
     private final OnlineUserService onlineUserService;
     private final SysDeptService sysDeptService;
     private final SlideCaptchaService slideCaptchaService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public LoginVO login(
@@ -347,5 +350,32 @@ public class AuthServiceImpl implements AuthService {
             return bearerToken.substring(tokenPrefix.length());
         }
         return null;
+    }
+
+    @Override
+    public void changePassword(ChangePasswordDTO changePasswordDTO) {
+        // 获取当前用户
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof SecurityUser securityUser)) {
+            throw new RuntimeException(ResultCode.UNAUTHORIZED.getMessage());
+        }
+
+        SysUser user = securityUser.getUser();
+        
+        // 验证原密码
+        if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("原密码不正确");
+        }
+        
+        // 检查新密码是否与原密码相同
+        if (passwordEncoder.matches(changePasswordDTO.getNewPassword(), user.getPassword())) {
+            throw new RuntimeException("新密码不能与原密码相同");
+        }
+        
+        // 更新密码
+        String encodedNewPassword = passwordEncoder.encode(changePasswordDTO.getNewPassword());
+        userService.updatePassword(user.getId(), encodedNewPassword);
+        
+        log.info("用户 {} 修改密码成功", user.getUsername());
     }
 }

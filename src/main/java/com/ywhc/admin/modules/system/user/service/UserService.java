@@ -65,6 +65,11 @@ public interface UserService extends IService<SysUser> {
     void resetPassword(Long userId, String newPassword);
 
     /**
+     * 更新用户密码
+     */
+    void updatePassword(Long userId, String encodedPassword);
+
+    /**
      * 修改用户状态
      */
     void updateStatus(Long userId, Integer status);

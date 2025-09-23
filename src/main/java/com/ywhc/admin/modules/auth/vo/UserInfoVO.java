@@ -10,7 +10,7 @@ import java.util.Set;
 
 /**
  * 用户信息VO
- * 
+ *
  * @author YWHC Team
  * @since 2024-01-01
  */
@@ -59,6 +59,9 @@ public class UserInfoVO implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastLoginTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;
 
     /**
      * 最后登录IP

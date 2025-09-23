@@ -1,6 +1,5 @@
 package com.ywhc.admin.modules.system.user.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,7 +11,6 @@ import com.ywhc.admin.modules.system.user.dto.UserCreateDTO;
 import com.ywhc.admin.modules.system.user.dto.UserQueryDTO;
 import com.ywhc.admin.modules.system.user.dto.UserUpdateDTO;
 import com.ywhc.admin.modules.system.user.entity.SysUser;
-import com.ywhc.admin.modules.system.user.entity.SysUserRole;
 import com.ywhc.admin.modules.system.user.mapper.UserMapper;
 import com.ywhc.admin.modules.system.user.service.UserRoleService;
 import com.ywhc.admin.modules.system.user.service.UserService;
@@ -28,7 +26,6 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 用户服务实现类
@@ -159,6 +156,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
         SysUser user = new SysUser();
         user.setId(userId);
         user.setPassword(passwordEncoder.encode(newPassword));
+        this.updateById(user);
+    }
+
+    @Override
+    public void updatePassword(Long userId, String encodedPassword) {
+        SysUser user = new SysUser();
+        user.setId(userId);
+        user.setPassword(encodedPassword);
         this.updateById(user);
     }
 

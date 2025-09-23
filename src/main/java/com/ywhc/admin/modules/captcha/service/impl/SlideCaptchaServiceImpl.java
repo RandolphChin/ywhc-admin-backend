@@ -22,6 +22,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -58,10 +59,13 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
             // 生成验证码ID
             String captchaId = UUID.randomUUID().toString().replace("-", "");
 
-            // 生成随机拼图位置 - 确保有足够的滑动距离
+            // 生成随机拼图位置 - 确保缺口不出现在背景中线的左区域
             Random random = new Random();
-            int puzzleX = random.nextInt(BACKGROUND_WIDTH - PUZZLE_WIDTH - 80) + 80; // 最小距离80px，确保有足够滑动空间
-            int puzzleY = random.nextInt(BACKGROUND_HEIGHT - PUZZLE_HEIGHT - 20) + 10;
+            int centerX = BACKGROUND_WIDTH / 2; // 背景中线位置 150px
+            int minX = centerX + 10; // 中线右侧10px开始，确保不在左区域
+            int maxX = BACKGROUND_WIDTH - PUZZLE_WIDTH - 20; // 右边界留20px边距
+            int puzzleX = ThreadLocalRandom.current().nextInt(maxX - minX + 1) + minX; // 在中线右侧随机生成
+            int puzzleY = ThreadLocalRandom.current().nextInt(BACKGROUND_HEIGHT - PUZZLE_HEIGHT - 20) + 10;
 
             // 生成背景图片
             BufferedImage backgroundImage = generateBackgroundImage();
@@ -275,7 +279,7 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
      */
     private boolean verifyPosition(int correctX, int slideX) {
         int diff = Math.abs(correctX - slideX);
-        
+
         // 详细的坐标验证日志
         log.info("位置验证详情:");
         log.info("  - 拼图目标位置(puzzleX): {}px", correctX);
@@ -283,15 +287,15 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
         log.info("  - 位置差值: {}px", diff);
         log.info("  - 验证容差: {}px", POSITION_TOLERANCE);
         log.info("  - 拼图尺寸: {}x{} px", PUZZLE_WIDTH, PUZZLE_HEIGHT);
-        
+
         boolean positionValid = diff <= POSITION_TOLERANCE;
-        
+
         if (positionValid) {
             log.info("✅ 位置验证通过 - 差值{}px在容差{}px范围内", diff, POSITION_TOLERANCE);
         } else {
             log.warn("❌ 位置验证失败 - 差值{}px超过容差{}px", diff, POSITION_TOLERANCE);
         }
-        
+
         // 坐标合理性检查
         if (correctX < 0 || correctX > BACKGROUND_WIDTH) {
             log.warn("⚠️  异常：目标位置{}超出背景宽度{}", correctX, BACKGROUND_WIDTH);
@@ -299,7 +303,7 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
         if (slideX < 0 || slideX > BACKGROUND_WIDTH) {
             log.warn("⚠️  异常：滑动位置{}超出背景宽度{}", slideX, BACKGROUND_WIDTH);
         }
-        
+
         return positionValid;
     }
 
@@ -366,10 +370,10 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
         // 找到最大X位置和最终位置
         int maxX = track.stream().mapToInt(SlideCaptchaVerifyRequest.TrackPoint::getX).max().orElse(0);
         int finalX = track.get(track.size() - 1).getX();
-        
+
         // 计算过度拖拽距离
         int overshoot = maxX - finalX;
-        
+
         log.info("过度拖拽分析 - 最大位置: {}, 最终位置: {}, 过度距离: {}, 阈值: {}",
                 maxX, finalX, overshoot, OVERSHOOT_THRESHOLD);
 
@@ -402,26 +406,26 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
             // 计算方向变化（如果有足够的点）
             if (i > 1) {
                 SlideCaptchaVerifyRequest.TrackPoint prev2 = track.get(i - 2);
-                
+
                 // 计算两个向量的角度差异
                 double angle1 = Math.atan2(prev.getY() - prev2.getY(), prev.getX() - prev2.getX());
                 double angle2 = Math.atan2(curr.getY() - prev.getY(), curr.getX() - prev.getX());
                 double angleDiff = Math.abs(angle2 - angle1);
-                
+
                 // 标准化角度差异到0-π范围
                 if (angleDiff > Math.PI) {
                     angleDiff = 2 * Math.PI - angleDiff;
                 }
-                
+
                 totalVariation += angleDiff;
             }
         }
 
         // 计算平滑度分数（角度变化越小，平滑度越高）
         double smoothness = Math.max(0.0, 1.0 - (totalVariation / (Math.PI * (track.size() - 2))));
-        
+
         log.debug("轨迹平滑度计算 - 总变化: {}, 总距离: {}, 平滑度: {}", totalVariation, totalDistance, smoothness);
-        
+
         return smoothness;
     }
 
@@ -432,14 +436,14 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
         if (track.size() < 5) return true;
 
         List<Double> velocities = new ArrayList<>();
-        
+
         for (int i = 1; i < track.size(); i++) {
             SlideCaptchaVerifyRequest.TrackPoint prev = track.get(i - 1);
             SlideCaptchaVerifyRequest.TrackPoint curr = track.get(i);
-            
+
             double distance = Math.abs(curr.getX() - prev.getX());
             long timeDiff = curr.getTime() - prev.getTime();
-            
+
             if (timeDiff > 0) {
                 double velocity = distance / timeDiff; // 像素/毫秒
                 velocities.add(velocity);
