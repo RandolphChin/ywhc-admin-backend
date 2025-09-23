@@ -93,8 +93,9 @@ public class UserController {
     @PutMapping("/{id}/reset-password")
     @PreAuthorize("hasAuthority('system:user:resetPwd')")
     public Result<String> resetPassword(
-            @Parameter(description = "用户ID") @PathVariable Long id,
-            @Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
+            @Parameter(description = "用户ID") @PathVariable Long id) {
+        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO();
+        resetPasswordDTO.setNewPassword("admin123");
         userService.resetPassword(id, resetPasswordDTO);
         return Result.success("密码重置成功");
     }
