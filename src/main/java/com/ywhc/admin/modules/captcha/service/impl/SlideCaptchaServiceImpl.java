@@ -40,7 +40,7 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
 
     // 验证码配置常量
     private static final int BACKGROUND_WIDTH = 300;
-    private static final int BACKGROUND_HEIGHT = 150;
+    private static final int BACKGROUND_HEIGHT = 150; // 恢复原来的背景高度
     private static final int PUZZLE_WIDTH = 50;
     private static final int PUZZLE_HEIGHT = 50;
     private static final int EXPIRE_MINUTES = 5; // 验证码过期时间（分钟）
@@ -65,7 +65,7 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
             int minX = centerX + 10; // 中线右侧10px开始，确保不在左区域
             int maxX = BACKGROUND_WIDTH - PUZZLE_WIDTH - 20; // 右边界留20px边距
             int puzzleX = ThreadLocalRandom.current().nextInt(maxX - minX + 1) + minX; // 在中线右侧随机生成
-            int puzzleY = ThreadLocalRandom.current().nextInt(BACKGROUND_HEIGHT - PUZZLE_HEIGHT - 20) + 10;
+            int puzzleY = (BACKGROUND_HEIGHT - PUZZLE_HEIGHT) / 2; // 拼图垂直居中，固定高度位置
 
             // 生成背景图片
             BufferedImage backgroundImage = generateBackgroundImage();
@@ -365,7 +365,8 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
      * 验证过度拖拽行为
      */
     private boolean verifyOvershoot(List<SlideCaptchaVerifyRequest.TrackPoint> track, double totalDistance) {
-        if (track.size() < 5) return true;
+        if (track.size() < 5)
+            return true;
 
         // 找到最大X位置和最终位置
         int maxX = track.stream().mapToInt(SlideCaptchaVerifyRequest.TrackPoint::getX).max().orElse(0);
@@ -390,7 +391,8 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
      * 计算轨迹平滑度
      */
     private double calculateTrackSmoothness(List<SlideCaptchaVerifyRequest.TrackPoint> track) {
-        if (track.size() < 3) return 1.0;
+        if (track.size() < 3)
+            return 1.0;
 
         double totalVariation = 0.0;
         double totalDistance = 0.0;
@@ -400,7 +402,8 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
             SlideCaptchaVerifyRequest.TrackPoint curr = track.get(i);
 
             // 计算距离
-            double distance = Math.sqrt(Math.pow(curr.getX() - prev.getX(), 2) + Math.pow(curr.getY() - prev.getY(), 2));
+            double distance = Math
+                    .sqrt(Math.pow(curr.getX() - prev.getX(), 2) + Math.pow(curr.getY() - prev.getY(), 2));
             totalDistance += distance;
 
             // 计算方向变化（如果有足够的点）
@@ -433,7 +436,8 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
      * 验证速度一致性
      */
     private boolean verifyVelocityConsistency(List<SlideCaptchaVerifyRequest.TrackPoint> track) {
-        if (track.size() < 5) return true;
+        if (track.size() < 5)
+            return true;
 
         List<Double> velocities = new ArrayList<>();
 
@@ -450,7 +454,8 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
             }
         }
 
-        if (velocities.isEmpty()) return false;
+        if (velocities.isEmpty())
+            return false;
 
         // 计算速度的标准差
         double avgVelocity = velocities.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
