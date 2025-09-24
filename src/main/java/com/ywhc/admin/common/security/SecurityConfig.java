@@ -52,42 +52,40 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // 禁用CSRF
-            .csrf(AbstractHttpConfigurer::disable)
+                // 禁用CSRF
+                .csrf(AbstractHttpConfigurer::disable)
 
-            // 配置CORS
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // 配置CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-            // 配置会话管理
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 配置会话管理
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            // 配置异常处理
-            .exceptionHandling(exception -> exception
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler)
-            )
+                // 配置异常处理
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler))
 
-            // 配置请求授权
-            .authorizeHttpRequests(auth -> auth
-                // 公开接口
-                .requestMatchers(
-                    "/auth/**",
-                    "/captcha/**",  // 滑块验证码相关接口
-                    "/crypto/public-key",
-                    "/doc.html",
-                    "/webjars/**",
-                    "/swagger-resources/**",
-                    "/v3/api-docs/**",
-                    "/favicon.ico",
-                    "/error"
-                ).permitAll()
+                // 配置请求授权
+                .authorizeHttpRequests(auth -> auth
+                        // 公开接口
+                        .requestMatchers(
+                                "/auth/**",
+                                "/captcha/**", // 滑块验证码相关接口
+                                "/crypto/public-key",
+                                "/doc.html",
+                                "/webjars/**",
+                                "/swagger-resources/**",
+                                "/v3/api-docs/**",
+                                "/favicon.ico",
+                                "/error")
+                        .permitAll()
 
-                // 其他请求需要认证
-                .anyRequest().authenticated()
-            )
+                        // 其他请求需要认证
+                        .anyRequest().authenticated())
 
-            // 添加JWT过滤器
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                // 添加JWT过滤器
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -116,16 +114,16 @@ public class SecurityConfig {
 
         // 允许的响应头
         configuration.setExposedHeaders(Arrays.asList(
-            "Content-Length",
-            "Access-Control-Allow-Origin",
-            "Access-Control-Allow-Headers",
-            "Cache-Control",
-            "Content-Language",
-            "Content-Type",
-            "Expires",
-            "Last-Modified",
-            "Pragma"
-        ));
+                "Content-Length",
+                "Access-Control-Allow-Origin",
+                "Access-Control-Allow-Headers",
+                "Cache-Control",
+                "Content-Language",
+                "Content-Type",
+                "Content-Disposition",
+                "Expires",
+                "Last-Modified",
+                "Pragma"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

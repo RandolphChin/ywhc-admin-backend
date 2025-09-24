@@ -41,15 +41,15 @@ public class SlideCaptchaServiceImpl implements SlideCaptchaService {
     // 验证码配置常量
     private static final int BACKGROUND_WIDTH = 300;
     private static final int BACKGROUND_HEIGHT = 150;
-    private static final int PUZZLE_WIDTH = 60;
-    private static final int PUZZLE_HEIGHT = 60;
+    private static final int PUZZLE_WIDTH = 50;
+    private static final int PUZZLE_HEIGHT = 50;
     private static final int EXPIRE_MINUTES = 5; // 验证码过期时间（分钟）
     private static final int TOKEN_EXPIRE_MINUTES = 10; // token过期时间（分钟）
     private static final String CAPTCHA_KEY_PREFIX = "slide_captcha:";
     private static final String TOKEN_KEY_PREFIX = "captcha_token:";
 
     // 验证容差 - 重新调整以确保视觉对齐与数学验证匹配
-    private static final int POSITION_TOLERANCE = 15; // 位置容差，确保真实对齐
+    private static final int POSITION_TOLERANCE = 20; // 位置容差，确保真实对齐
     private static final int OVERSHOOT_THRESHOLD = 25; // 过度拖拽阈值
     private static final double MIN_TRACK_SMOOTHNESS = 0.5; // 轨迹平滑度最小值
 

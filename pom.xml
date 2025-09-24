@@ -76,11 +76,18 @@
             <version>4.6</version>
         </dependency>
         -->
-        <!-- <dependency>
+        <!-- 
+        <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-generator</artifactId>
             <version>${mybatis-plus.version}</version>
-        </dependency> -->
+        </dependency>
+         -->
+        <!-- Freemarker模板引擎 -->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+        </dependency>
 
         <!-- JWT -->
         <dependency>

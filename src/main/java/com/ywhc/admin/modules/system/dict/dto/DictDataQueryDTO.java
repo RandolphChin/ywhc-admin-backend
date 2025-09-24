@@ -5,6 +5,7 @@ import com.ywhc.admin.common.annotation.QueryType;
 import com.ywhc.admin.common.dto.BaseQueryDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 字典数据查询DTO
@@ -13,6 +14,7 @@ import lombok.Data;
  * @since 2024-01-01
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Schema(description = "字典数据查询DTO")
 public class DictDataQueryDTO extends BaseQueryDTO {
     @Schema(description = "字典类型", example = "sys_notice_status")

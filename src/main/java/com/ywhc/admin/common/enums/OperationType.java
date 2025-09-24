@@ -35,7 +35,10 @@ public enum OperationType {
     /**
      * 登出操作
      */
-    LOGOUT(6, "登出");
+    LOGOUT(6, "登出"),
+
+    // 导出
+    EXPORT(7, "导出");
 
     private final int code;
     private final String description;
