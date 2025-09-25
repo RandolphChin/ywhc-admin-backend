@@ -20,25 +20,6 @@ public class OnlineUserCleanupTask {
     private final OnlineUserService onlineUserService;
 
     /**
-     * 每10分钟清理一次过期的在线用户
-     * // 表示每10分钟执行一次
-     */
-    @Scheduled(cron = "0 */10 * * * ?")
-    public void cleanupExpiredOnlineUsers() {
-        try {
-            log.debug("开始清理过期在线用户...");
-            long startTime = System.currentTimeMillis();
-
-            onlineUserService.removeExpiredUsers();
-
-            long endTime = System.currentTimeMillis();
-            log.debug("清理过期在线用户完成，耗时: {} ms", endTime - startTime);
-        } catch (Exception e) {
-            log.error("清理过期在线用户失败: {}", e.getMessage(), e);
-        }
-    }
-
-    /**
      * 每小时统计在线用户数量
      * cron表达式：0 0 * * * ? 表示每小时整点执行一次
      */
