@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 <#if entityLombokModel>
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.baomidou.mybatisplus.annotation.*;
 </#if>
 
 /**
@@ -60,7 +59,6 @@ public class ${entity} implements Serializable {
         <#-- 主键 -->
         <#if field.keyIdentityFlag>
     @TableId(value = "${field.annotationColumnName}", type = IdType.AUTO)
-        <#elseif idType??>
     @TableId(value = "${field.annotationColumnName}", type = IdType.${idType})
         <#elseif field.convert>
     @TableId("${field.annotationColumnName}")
@@ -77,38 +75,6 @@ public class ${entity} implements Serializable {
     <#-- 创建时间字段自动填充 -->
         <#if field.convert>
     @TableField(value = "${field.annotationColumnName}", fill = FieldFill.INSERT)
-        <#else>
-    @TableField(fill = FieldFill.INSERT)
-        </#if>
-    <#elseif field.propertyName == "updateTime">
-    <#-- 更新时间字段自动填充 -->
-        <#if field.convert>
-    @TableField(value = "${field.annotationColumnName}", fill = FieldFill.INSERT_UPDATE)
-        <#else>
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-        </#if>
-    <#elseif field.propertyName == "createBy">
-    <#-- 创建者字段自动填充 -->
-        <#if field.convert>
-    @TableField(value = "${field.annotationColumnName}", fill = FieldFill.INSERT)
-        <#else>
-    @TableField(fill = FieldFill.INSERT)
-        </#if>
-    <#elseif field.propertyName == "updateBy">
-    <#-- 更新者字段自动填充 -->
-        <#if field.convert>
-    @TableField(value = "${field.annotationColumnName}", fill = FieldFill.INSERT_UPDATE)
-        <#else>
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-        </#if>
-    <#elseif field.convert>
-    @TableField("${field.annotationColumnName}")
-    </#if>
-    <#-- 乐观锁注解 -->
-    <#if field.versionField?? && field.versionField>
-    @Version
-    </#if>
-    <#-- 逻辑删除注解 -->
     <#if field.logicDeleteField?? && field.logicDeleteField>
     @TableLogic
     </#if>

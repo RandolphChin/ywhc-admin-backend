@@ -35,8 +35,8 @@ export const ${entity?uncap_first}Api = {
   /**
    * 修改${table.comment!}
    */
-  update(id, data) {
-    return api.put(`/${cfg.moduleName}/${cfg.businessName}/${r'${id}'}`, data)
+  update(data) {
+    return api.put('/${cfg.moduleName}/${cfg.businessName}', data)
   },
 
   /**

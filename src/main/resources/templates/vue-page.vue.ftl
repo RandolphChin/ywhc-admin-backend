@@ -1,7 +1,7 @@
 <template>
   <q-page>
     <!-- 搜索和操作栏 -->
-    <q-card class="q-mb-xs">
+    <q-card>
       <q-card-section>
         <div class="row q-gutter-sm items-center">
 <#list table.fields as field>
@@ -16,17 +16,21 @@
           />
   </#if>
 </#list>
-          <q-btn color="primary" icon="search" label="搜索" @click="load${entity}s" />
-          <q-btn color="secondary" icon="refresh" label="重置" @click="resetQuery" />
+          <q-btn color="primary" outline icon="search" label="搜索" @click="load${entity}s" />
+          <q-btn color="grey-6" outline icon="refresh" label="重置" @click="resetQuery" />
+        </div>
+        <div class="row q-mt-xs q-gutter-sm">  
           <q-btn
-            color="positive"
+            color="primary"
+            outline
             icon="add"
             label="新增"
             @click="show${entity}Create"
             v-permission="'${cfg.moduleName}:${cfg.businessName}:add'"
           />
           <q-btn
-            color="negative"
+            color="primary"
+            outline
             icon="delete"
             label="批量删除"
             @click="batchDelete"
@@ -34,7 +38,8 @@
             v-permission="'${cfg.moduleName}:${cfg.businessName}:remove'"
           />
           <q-btn
-            color="info"
+            color="primary"
+            outline
             icon="download"
             label="导出"
             @click="export${entity}s"
@@ -81,6 +86,7 @@
               <q-btn
                 flat
                 dense
+                size="sm"
                 color="primary"
                 icon="visibility"
                 @click="show${entity}Detail(props.row)"
@@ -90,6 +96,7 @@
               <q-btn
                 flat
                 dense
+                size="sm"
                 color="primary"
                 icon="edit"
                 @click="show${entity}Edit(props.row)"
@@ -100,7 +107,8 @@
               <q-btn
                 flat
                 dense
-                color="negative"
+                size="sm"
+                color="primary"
                 icon="delete"
                 @click="delete${entity}(props.row)"
                 v-permission="'${cfg.moduleName}:${cfg.businessName}:remove'"
@@ -122,28 +130,12 @@
       </q-card-section>
     </q-card>
 
-    <!-- ${table.comment!}详情对话框 -->
+    <!-- ${table.comment!}对话框 -->
     <${entity}EditDialog 
-      v-model="${entity?uncap_first}DetailDialog" 
+      v-model="${entity?uncap_first}Dialog" 
       :${entity?uncap_first}-data="current${entity}" 
-      :is-readonly="true"
-      @refresh="handleRefresh"
-    />
-
-    <!-- ${table.comment!}编辑对话框 -->
-    <${entity}EditDialog 
-      v-model="${entity?uncap_first}EditDialog" 
-      :${entity?uncap_first}-data="current${entity}" 
-      :is-edit="true"
-      :is-readonly="false"
-      @submit="handleSubmit"
-    />
-
-    <!-- ${table.comment!}新增对话框 -->
-    <${entity}EditDialog 
-      v-model="${entity?uncap_first}CreateDialog" 
-      :is-edit="false"
-      :is-readonly="false"
+      :is-edit="dialogMode === 'edit'"
+      :is-readonly="dialogMode === 'view'"
       @submit="handleSubmit"
     />
   </q-page>
@@ -164,9 +156,8 @@ defineOptions({
 const $q = useQuasar()
 
 const loading = ref(false)
-const ${entity?uncap_first}DetailDialog = ref(false)
-const ${entity?uncap_first}EditDialog = ref(false)
-const ${entity?uncap_first}CreateDialog = ref(false)
+const ${entity?uncap_first}Dialog = ref(false)
+const dialogMode = ref('view') // 'view', 'edit', 'create'
 const ${entity?uncap_first}s = ref([])
 const current${entity} = ref(null)
 const selectedRows = ref([])
@@ -272,17 +263,20 @@ const resetQuery = () => {
 
 const show${entity}Detail = (${entity?uncap_first}) => {
   current${entity}.value = ${entity?uncap_first}
-  ${entity?uncap_first}DetailDialog.value = true
+  dialogMode.value = 'view'
+  ${entity?uncap_first}Dialog.value = true
 }
 
 const show${entity}Edit = (${entity?uncap_first}) => {
   current${entity}.value = ${entity?uncap_first}
-  ${entity?uncap_first}EditDialog.value = true
+  dialogMode.value = 'edit'
+  ${entity?uncap_first}Dialog.value = true
 }
 
 const show${entity}Create = () => {
   current${entity}.value = null
-  ${entity?uncap_first}CreateDialog.value = true
+  dialogMode.value = 'create'
+  ${entity?uncap_first}Dialog.value = true
 }
 
 const delete${entity} = (${entity?uncap_first}) => {
@@ -363,7 +357,7 @@ const handleRefresh = () => {
 const handleSubmit = async (${entity?uncap_first}Data) => {
   try {
     if (${entity?uncap_first}Data.id) {
-      await ${entity?uncap_first}Api.update(${entity?uncap_first}Data.id, ${entity?uncap_first}Data)
+      await ${entity?uncap_first}Api.update(${entity?uncap_first}Data)
       $q.notify({
         type: 'positive',
         message: '${table.comment!}更新成功'
@@ -375,6 +369,7 @@ const handleSubmit = async (${entity?uncap_first}Data) => {
         message: '${table.comment!}创建成功'
       })
     }
+    ${entity?uncap_first}Dialog.value = false
     load${entity}s()
   } catch (error) {
     $q.notify({

@@ -235,9 +235,7 @@ const submitting = ref(false)
 
 const formData = ref({
 <#list table.fields as field>
-  <#if !field.keyFlag>
   ${field.propertyName}: <#if field.propertyType == "String">''<#elseif field.propertyType == "Integer" || field.propertyType == "Long">null<#elseif field.propertyType == "Boolean">false<#else>null</#if>,
-  </#if>
 </#list>
 })
 
@@ -263,9 +261,7 @@ watch(() => props.${entity?uncap_first}Data, (newData) => {
     // 重置表单
     formData.value = {
 <#list table.fields as field>
-  <#if !field.keyFlag>
       ${field.propertyName}: <#if field.propertyType == "String">''<#elseif field.propertyType == "Integer" || field.propertyType == "Long">null<#elseif field.propertyType == "Boolean">false<#else>null</#if>,
-  </#if>
 </#list>
     }
   }
@@ -289,58 +285,5 @@ const handleClose = () => {
 </script>
 
 <style lang="scss" scoped>
-.edit-dialog {
-  .dialog-card {
-    .dialog-header {
-      background: #f5f5f5;
-      border-bottom: 1px solid #e0e0e0;
-    }
-    
-    .dialog-content {
-      max-height: 60vh;
-      overflow-y: auto;
-    }
-    
-    .dialog-footer {
-      border-top: 1px solid #e0e0e0;
-    }
-  }
-}
 
-.edit-form {
-  .edit-field-inline {
-    display: flex;
-    align-items: center;
-    margin-bottom: 16px;
-    
-    .field-label {
-      min-width: 120px;
-      margin-right: 12px;
-      font-weight: 500;
-      
-      &.required::after {
-        content: ' *';
-        color: #f56565;
-      }
-    }
-    
-    .field-input {
-      flex: 1;
-    }
-  }
-  
-  .edit-field-block {
-    margin-bottom: 16px;
-    
-    .field-label {
-      font-weight: 500;
-      margin-bottom: 8px;
-      
-      &.required::after {
-        content: ' *';
-        color: #f56565;
-      }
-    }
-  }
-}
 </style>

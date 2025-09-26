@@ -217,7 +217,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             // 创建后端目录结构
             String basePackage = config.getPackageName().replace(".", "/") + "/modules/" + config.getModuleName();
             String javaDir = outputDir + "/backend/src/main/java/" + basePackage + "/" + config.getBusinessName();
-            String resourcesDir = outputDir + "/backend/src/main/resources";
+            String resourcesDir = outputDir + "/backend/src/main/resources" + "/mapper/" + config.getModuleName() + "/" +config.getBusinessName();
 
             // 生成后端代码
             generateBackendCode(config, javaDir, resourcesDir, templateData);
@@ -248,7 +248,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             new File(javaDir + "/service").mkdirs();
             new File(javaDir + "/service/impl").mkdirs();
             new File(javaDir + "/mapper").mkdirs();
-            new File(resourcesDir + "/mapper").mkdirs();
+            new File(resourcesDir).mkdirs();
 
             // 生成Entity
             if (config.getGenerateOptions().getGenerateEntity()) {
@@ -288,7 +288,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             // 生成MapperXML
             if (config.getGenerateOptions().getGenerateMapperXml()) {
                 generateFileFromTemplate("mapper.xml.ftl",
-                    resourcesDir + "/mapper/" + entityName + "Mapper.xml",
+                    resourcesDir + "/" + entityName + "Mapper.xml",
                     templateData);
             }
 
@@ -316,7 +316,18 @@ public class GeneratorServiceImpl implements GeneratorService {
 
             // 生成DTO
             if (config.getGenerateOptions().getGenerateDto()) {
-                generateFileFromTemplate("dto.java.ftl",
+                // 生成CreateDTO
+                generateFileFromTemplate("createDto.java.ftl",
+                    dtoDir + "/" + GeneratorUtils.toPascalCase(config.getBusinessName()) + "CreateDTO.java",
+                    templateData);
+
+                // 生成UpdateDTO
+                generateFileFromTemplate("updateDto.java.ftl",
+                    dtoDir + "/" + GeneratorUtils.toPascalCase(config.getBusinessName()) + "UpdateDTO.java",
+                    templateData);
+
+                // 生成QueryDTO
+                generateFileFromTemplate("queryDto.java.ftl",
                     dtoDir + "/" + GeneratorUtils.toPascalCase(config.getBusinessName()) + "QueryDTO.java",
                     templateData);
             }
@@ -411,6 +422,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             field.put("comment", column.getColumnComment());
             field.put("keyFlag", column.getIsPrimaryKey());
             field.put("nullable", column.getIsNullable());
+            field.put("columnLength", column.getColumnLength());
             field.put("columnType", column.getDataType());
             field.put("annotationColumnName", column.getColumnName());
             field.put("capitalName", GeneratorUtils.toPascalCase(column.getJavaField()));
@@ -444,7 +456,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         // 包信息
         Map<String, String> packageInfo = new HashMap<>();
-        String basePackage = config.getPackageName() + ".modules." + config.getModuleName();
+        String basePackage = config.getPackageName() + ".modules." + config.getModuleName() + "." + config.getBusinessName();
         packageInfo.put("Controller", basePackage + ".controller");
         packageInfo.put("Service", basePackage + ".service");
         packageInfo.put("ServiceImpl", basePackage + ".service.impl");
@@ -532,11 +544,11 @@ public class GeneratorServiceImpl implements GeneratorService {
             
             -- 2. 添加功能按钮
             INSERT INTO `sys_menu` (`parent_id`, `menu_name`, `menu_type`, `path`, `component`, `permission`, `icon`, `sort_order`, `is_external`, `is_cache`, `is_visible`, `status`, `remark`, `deleted`, `create_time`, `update_time`, `create_by`, `update_by`) VALUES
-            (@menu_id, '%s查询', 2, '', '', '%s:%s:query', 'search', 1, 0, 1, 1, 1, '%s查询按钮', 0, NOW(), NOW(), 1, 1),
-            (@menu_id, '%s新增', 2, '', '', '%s:%s:add', 'add', 2, 0, 1, 1, 1, '%s新增按钮', 0, NOW(), NOW(), 1, 1),
-            (@menu_id, '%s修改', 2, '', '', '%s:%s:edit', 'edit', 3, 0, 1, 1, 1, '%s修改按钮', 0, NOW(), NOW(), 1, 1),
-            (@menu_id, '%s删除', 2, '', '', '%s:%s:remove', 'delete', 4, 0, 1, 1, 1, '%s删除按钮', 0, NOW(), NOW(), 1, 1),
-            (@menu_id, '%s导出', 2, '', '', '%s:%s:export', 'file_download', 5, 0, 1, 1, 1, '%s导出按钮', 0, NOW(), NOW(), 1, 1);
+            (@menu_id, '%s查询', 2, '', '', '%s:%s:query', null, 1, 0, 1, 1, 1, '%s查询按钮', 0, NOW(), NOW(), 1, 1),
+            (@menu_id, '%s新增', 2, '', '', '%s:%s:add', null, 2, 0, 1, 1, 1, '%s新增按钮', 0, NOW(), NOW(), 1, 1),
+            (@menu_id, '%s修改', 2, '', '', '%s:%s:edit', null, 3, 0, 1, 1, 1, '%s修改按钮', 0, NOW(), NOW(), 1, 1),
+            (@menu_id, '%s删除', 2, '', '', '%s:%s:remove', null, 4, 0, 1, 1, 1, '%s删除按钮', 0, NOW(), NOW(), 1, 1),
+            (@menu_id, '%s导出', 2, '', '', '%s:%s:export', null, 5, 0, 1, 1, 1, '%s导出按钮', 0, NOW(), NOW(), 1, 1);
             
             -- 3. 查看生成的菜单
             SELECT 
