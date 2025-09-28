@@ -38,9 +38,9 @@ public class Enterprise implements Serializable {
 
     @Schema(description = "数据权限-当前用户所在部门")
     @TableField("dept_id")
-    private Integer deptId;
+    private Long deptId;
 
-    @Schema(description = "状态：0-禁用，1-正常")
+    @Schema(description = "状态：存续-1,吊销-2,吊销-3,注销-4,停业-5")
     @TableField("status")
     private Integer status;
 

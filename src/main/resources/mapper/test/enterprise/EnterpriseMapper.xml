@@ -30,4 +30,26 @@
         update_by
     </sql>
 
+    <!-- 分页查询 -->
+    <select id="pageJoin" resultType="com.ywhc.admin.modules.test.enterprise.vo.EnterpriseVO">
+        SELECT
+            biz_enterprise.*,
+            creator.username AS create_by_name,
+            updater.username AS update_by_name
+        FROM biz_enterprise biz_enterprise
+        LEFT JOIN sys_user creator ON creator.id = biz_enterprise.create_by
+        LEFT JOIN sys_user updater ON updater.id = biz_enterprise.update_by
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="listJoin" resultType="com.ywhc.admin.modules.test.enterprise.vo.EnterpriseVO">
+        SELECT
+            biz_enterprise.*,
+            creator.username AS create_by_name,
+            updater.username AS update_by_name
+        FROM biz_enterprise biz_enterprise
+        LEFT JOIN sys_user creator ON creator.id = biz_enterprise.create_by
+        LEFT JOIN sys_user updater ON updater.id = biz_enterprise.update_by
+        ${ew.customSqlSegment}
+    </select>
 </mapper>

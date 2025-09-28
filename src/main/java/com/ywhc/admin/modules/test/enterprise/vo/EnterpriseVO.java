@@ -45,9 +45,9 @@ public class EnterpriseVO {
     private LocalDateTime updateTime;
 
     @Schema(description = "创建者")
-    private Long createBy;
+    private String createByName;
 
     @Schema(description = "更新者")
-    private Long updateBy;
+    private String updateByName;
 
 }

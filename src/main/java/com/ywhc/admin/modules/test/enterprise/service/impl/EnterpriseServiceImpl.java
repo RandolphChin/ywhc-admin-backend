@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ywhc.admin.common.util.SecurityUtils;
 import com.ywhc.admin.modules.test.enterprise.entity.Enterprise;
 import com.ywhc.admin.modules.test.enterprise.mapper.EnterpriseMapper;
 import com.ywhc.admin.modules.test.enterprise.service.EnterpriseService;
@@ -39,30 +40,31 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterprise> implements EnterpriseService {
-
+    private final EnterpriseMapper enterpriseMapper;
     @Override
     public IPage<EnterpriseVO> pageEnterprises(EnterpriseQueryDTO dto) {
         Page<Enterprise> page = new Page<>(dto.getCurrent(), dto.getSize());
-        Page<Enterprise> entityPage = this.page(page, QueryProcessor.createQueryWrapper(dto));
-        Page<EnterpriseVO> pageVO = PageConverter.convert(entityPage, this::convertToVO);
+        //Page<Enterprise> entityPage = this.page(page, QueryProcessor.createQueryWrapper(dto));
+        //Page<EnterpriseVO> pageVO = PageConverter.convert(entityPage, this::convertToVO);
+        IPage<EnterpriseVO> pageVO = enterpriseMapper.pageJoin(page, QueryProcessor.createQueryWrapper(dto));
         return pageVO;
     }
 
     @Override
     public List<EnterpriseVO> listEnterprises(EnterpriseQueryDTO dto) {
         QueryWrapper<Enterprise> queryWrapper = QueryProcessor.createQueryWrapper(dto);
-        List<Enterprise> list = this.list(queryWrapper);
-        return ListConverter.convert(list, this::convertToVO);
+        List<EnterpriseVO> list = enterpriseMapper.listJoin(queryWrapper);
+        return list;
     }
 
     @Override
     public byte[] exportEnterprises(EnterpriseQueryDTO dto) {
         List<EnterpriseVO> list = listEnterprises(dto);
-        
+
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             // 创建Excel写入器
             ExcelWriter writer = ExcelUtil.getWriter(true);
-            
+
             // 设置表头
             Map<String, String> headerMap = new LinkedHashMap<>();
             headerMap.put("enterpriseName", "企业名称");
@@ -74,10 +76,10 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
             headerMap.put("updateTime", "更新时间");
             headerMap.put("createBy", "创建者");
             headerMap.put("updateBy", "更新者");
-            
+
             // 写入表头
             writer.writeHeadRow(new ArrayList<>(headerMap.values()));
-            
+
             // 转换数据为Map列表
             List<Map<String, Object>> rows = new ArrayList<>();
             for (EnterpriseVO vo : list) {
@@ -89,18 +91,18 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
                 row.put("删除标志：0-正常，1-删除", vo.getDeleted());
                 row.put("创建时间", DateUtil.formatLocalDateTime(vo.getCreateTime()));
                 row.put("更新时间", DateUtil.formatLocalDateTime(vo.getUpdateTime()));
-                row.put("创建者", vo.getCreateBy());
-                row.put("更新者", vo.getUpdateBy());
+                row.put("创建者", vo.getCreateByName());
+                row.put("更新者", vo.getUpdateByName());
                 rows.add(row);
             }
-            
+
             // 写入数据
             writer.write(rows, false);
-            
+
             // 输出到字节数组
             writer.flush(out);
             writer.close();
-            
+
             return out.toByteArray();
         } catch (Exception e) {
             log.error("导出测试企业Excel失败", e);
@@ -113,6 +115,7 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
     public Long createEnterprise(EnterpriseCreateDTO dto) {
         Enterprise entity = new Enterprise();
         BeanUtils.copyProperties(dto, entity);
+        entity.setDeptId(SecurityUtils.getCurrentUserDeptId());
         this.save(entity);
         return entity.getId();
     }

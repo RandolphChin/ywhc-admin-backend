@@ -103,7 +103,7 @@ public class SecurityUtils {
     /**
      * 获取当前用户部门ID
      */
-    public Long getCurrentUserDeptId() {
+    public static Long getCurrentUserDeptId() {
         // 从Spring Security获取
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof SecurityUser securityUser) {
