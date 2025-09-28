@@ -53,6 +53,7 @@
     <q-card>
       <q-card-section>
         <q-table
+          class="compact-checkbox-table"
           :rows="${entity?uncap_first}s"
           :columns="columns"
           row-key="id"
@@ -330,11 +331,22 @@ const batchDelete = () => {
 const export${entity}s = async () => {
   try {
     const response = await ${entity?uncap_first}Api.export(queryForm.value)
+    
+    // 从响应头中提取文件名
+    let fileName = `${table.comment!}_${r'${new Date().getTime()}'}.xlsx` // 默认文件名
+    const contentDisposition = response.headers['content-disposition']
+    if (contentDisposition) {
+      const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+      if (fileNameMatch && fileNameMatch[1]) {
+        fileName = fileNameMatch[1].replace(/['"]/g, '') // 移除引号
+      }
+    }
+    
     const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `${table.comment!}_${r'${new Date().getTime()}'}.xlsx`
+    link.download = fileName
     link.click()
     window.URL.revokeObjectURL(url)
     

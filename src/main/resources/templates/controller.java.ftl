@@ -2,7 +2,6 @@ package ${package.Controller};
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import ${package.Service}.${table.serviceName};
-import ${package.Entity}.${entity};
 import ${package.Parent}.dto.${entity}CreateDTO;
 import ${package.Parent}.dto.${entity}UpdateDTO;
 import ${package.Parent}.dto.${entity}QueryDTO;

@@ -45,7 +45,6 @@ public class GeneratorUtils {
     }
     
     /**
-     * 获取Java类型
      */
     public static String getJavaType(String dbType) {
         return TYPE_MAPPING.getOrDefault(dbType.toLowerCase(), "String");
@@ -56,6 +55,11 @@ public class GeneratorUtils {
      */
     public static String toCamelCase(String str) {
         if (str == null || str.isEmpty()) {
+            return str;
+        }
+        
+        // 如果字符串中没有下划线，说明已经是驼峰格式，直接返回
+        if (!str.contains("_")) {
             return str;
         }
         
