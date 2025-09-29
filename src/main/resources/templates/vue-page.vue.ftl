@@ -58,7 +58,7 @@
           :columns="columns"
           row-key="id"
           :loading="loading"
-          :pagination="pagination"
+          v-model:pagination="pagination"
           @request="onRequest"
           binary-state-sort
           :rows-per-page-options="rowsPerPageOptions"
@@ -224,11 +224,21 @@ const load${entity}s = async (props) => {
     const total = pageData.total || 0
 
     ${entity?uncap_first}s.value = records
+    /* 方式一
     pagination.value.rowsNumber = total
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
     pagination.value.descending = descending
+    */
+     // 方式二
+    pagination.value = {
+      sortBy: sortBy,
+      descending: descending,
+      page: page,
+      rowsPerPage: rowsPerPage,
+      rowsNumber: total
+    }
   } catch (error) {
     console.error('加载${table.comment!}列表失败:', error)
   } finally {
