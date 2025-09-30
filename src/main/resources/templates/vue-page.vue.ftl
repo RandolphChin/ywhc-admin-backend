@@ -151,7 +151,7 @@ import ${entity}EditDialog from './${entity}EditDialog.vue'
 import { formatTime } from 'src/utils/index'
 
 defineOptions({
-  name: '${entity}Page'
+  name: '${cfg.moduleName?cap_first}${entity}Page'
 })
 
 const $q = useQuasar()
