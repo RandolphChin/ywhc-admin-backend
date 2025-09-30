@@ -42,11 +42,11 @@ public class EnterpriseQueryDTO extends BaseQueryDTO {
     private Integer deleted=0;
 
     @Schema(description = "创建者")
-    @QueryField(column = "create_by", type = QueryType.LIKE)
+    @QueryField(column = "biz_enterprise.create_by", type = QueryType.LIKE)
     private Long createBy;
 
     @Schema(description = "更新者")
-    @QueryField(column = "update_by", type = QueryType.LIKE)
+    @QueryField(column = "biz_enterprise.update_by", type = QueryType.LIKE)
     private Long updateBy;
 
 
@@ -55,7 +55,7 @@ public class EnterpriseQueryDTO extends BaseQueryDTO {
      */
     @Schema(description = "创建时间范围")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") // 用于URL参数
-    @QueryField(column = "create_time", type = QueryType.DATE_RANGE)
+    @QueryField(column = "biz_enterprise.create_time", type = QueryType.DATE_RANGE)
     private List<LocalDateTime> createTimeBetween;
 
     /**
@@ -63,7 +63,7 @@ public class EnterpriseQueryDTO extends BaseQueryDTO {
      */
     @Schema(description = "更新时间范围")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") // 用于URL参数
-    @QueryField(column = "update_time", type = QueryType.DATE_RANGE)
+    @QueryField(column = "biz_enterprise.update_time", type = QueryType.DATE_RANGE)
     private List<LocalDateTime> updateTimeBetween;
 
 

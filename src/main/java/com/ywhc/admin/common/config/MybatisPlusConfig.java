@@ -25,23 +25,28 @@ import java.time.LocalDateTime;
 public class MybatisPlusConfig {
 
     /**
-     * 分页插件
+     * MyBatis Plus 拦截器配置
+     * 包含分页插件
      */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+
+        // 添加分页插件
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+
         return interceptor;
     }
 
     /**
      * 数据权限拦截器
-     * 注意：需要JSQLParser依赖才能正常工作，否则数据权限功能不会生效
+     * 注意：这是原生 MyBatis 拦截器，需要单独注册为 Bean
+     * 需要JSQLParser依赖才能正常工作，否则数据权限功能不会生效
      */
-     @Bean
-     public DataPermissionInterceptor dataPermissionInterceptor() {
-         return new DataPermissionInterceptor();
-     }
+    @Bean
+    public DataPermissionInterceptor dataPermissionInterceptor() {
+        return new DataPermissionInterceptor();
+    }
 
     /**
      * 自动填充处理器

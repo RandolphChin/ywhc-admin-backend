@@ -40,7 +40,7 @@ public class EnterpriseController {
     @Operation(summary = "分页查询测试企业列表")
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('test:enterprise:list')")
-    // @DataPermission(deptIdColumn = "dept_id")  数据权限
+    @DataPermission(deptAlias = "biz_enterprise", deptIdColumn = "dept_id")  //数据权限：单表查询，不需要设置deptAlias
     public Result<IPage<EnterpriseVO>> pageEnterprises(EnterpriseQueryDTO dto) {
         IPage<EnterpriseVO> page = enterpriseService.pageEnterprises(dto);
         return Result.success(page);

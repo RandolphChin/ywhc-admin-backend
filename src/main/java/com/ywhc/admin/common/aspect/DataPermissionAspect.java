@@ -61,12 +61,16 @@ public class DataPermissionAspect {
     protected void handleDataScope(DataPermission dataPermission) {
         // 获取当前用户
         Long userId = SecurityUtils.getUserId();
+        log.debug("DataPermission - 当前用户ID: {}", userId);
+        
         if (userId == null) {
+            log.warn("DataPermission - 无法获取当前用户ID，跳过数据权限处理");
             return;
         }
 
         // 获取用户数据权限范围
         Set<Long> dataScope = deptService.getDataScope(userId);
+        log.debug("DataPermission - 用户 {} 的数据权限范围: {}", userId, dataScope);
         
         if (dataScope != null && !dataScope.isEmpty()) {
             // 构建数据权限SQL片段
@@ -87,25 +91,32 @@ public class DataPermissionAspect {
             }
             
             if (dataPermission.filterUser()) {
-                if (sqlString.length() > 0) {
-                    sqlString.append(" OR ");
-                }
-                
-                String userAlias = dataPermission.userAlias();
                 String userColumn = dataPermission.userIdColumn();
                 
-                if (!userAlias.isEmpty()) {
-                    sqlString.append(userAlias).append(".");
+                // 只有当用户列名不为空时才添加用户权限条件
+                if (userColumn != null && !userColumn.trim().isEmpty()) {
+                    if (sqlString.length() > 0) {
+                        sqlString.append(" OR ");
+                    }
+                    
+                    String userAlias = dataPermission.userAlias();
+                    
+                    if (!userAlias.isEmpty()) {
+                        sqlString.append(userAlias).append(".");
+                    }
+                    sqlString.append(userColumn);
+                    sqlString.append(" = ").append(userId);
                 }
-                // 直接使用指定的用户列名，不做额外的表别名处理
-                sqlString.append(userColumn);
-                sqlString.append(" = ").append(userId);
             }
             
             // 将SQL片段存储到ThreadLocal中
             if (sqlString.length() > 0) {
-                DataScopeContextHolder.setDataScope("(" + sqlString.toString() + ")");
+                String finalSql = "(" + sqlString.toString() + ")";
+                DataScopeContextHolder.setDataScope(finalSql);
+                log.debug("DataPermission - 生成的数据权限SQL: {}", finalSql);
             }
+        } else {
+            log.debug("DataPermission - 用户 {} 没有数据权限范围或为空", userId);
         }
     }
 

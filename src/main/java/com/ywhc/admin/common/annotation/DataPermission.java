@@ -52,7 +52,7 @@ public @interface DataPermission {
     /**
      * 用户字段名（业务表中使用哪个字段，对应sys_user中的主键）
      */
-    String userIdColumn() default "create_by";
+    String userIdColumn() default "";
 
     /**
      * 是否过滤用户数据
