@@ -24,9 +24,12 @@ public class UserQueryDTO extends BaseQueryDTO {
     /**
      * 用户名
      */
-    @QueryField(column = "user_name", type = QueryType.LIKE)
+    @QueryField(column = "username", type = QueryType.LIKE)
     private String username;
 
+    // 昵称
+    @QueryField(column = "nickname", type = QueryType.LIKE)
+    private String nickname;
     /**
      * 状态：0-禁用，1-正常
      */
@@ -36,6 +39,7 @@ public class UserQueryDTO extends BaseQueryDTO {
     /**
      * 部门ID
      */
+    @QueryField(column = "dept_id", type = QueryType.EQUAL)
     private Long deptId;
 
 }
