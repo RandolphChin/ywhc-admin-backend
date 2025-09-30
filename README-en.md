@@ -10,8 +10,8 @@ A modern enterprise-level backend management system built with Spring Boot 3.2, 
 
 | Project | Description | Link |
 |---------|-------------|------|
-| 🖥️ **Backend Project** | Spring Boot3 Backend Service | [ywhc-admin-backend](https://github.com/your-org/ywhc-admin/tree/main/ywhc-admin-backend) |
-| 🌐 **Frontend Project** | Vue3 + Quasar Framework Frontend Application | [ywhc-admin-frontend](https://github.com/your-org/ywhc-admin/tree/main/ywhc-admin-frontend) |
+| 🖥️ **Backend Project** | Spring Boot3 Backend Service | [ywhc-admin-backend](https://github.com/RandolphChin/ywhc-admin-backend.git) |
+| 🌐 **Frontend Project** | Vue3 + Quasar Framework Frontend Application | [ywhc-admin-frontend](https://github.com/RandolphChin/ywhc-admin-frontend.git) |
 
 ## 📋 Features
 

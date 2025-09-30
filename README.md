@@ -10,8 +10,8 @@
 
 | 项目 | 描述 | 链接 |
 |------|------|------|
-| 🖥️ **后端项目** | Spring Boot3 后端服务 | [ywhc-admin-backend](https://github.com/your-org/ywhc-admin/tree/main/ywhc-admin-backend) |
-| 🌐 **前端项目** | Vue3 + Quasar Framework 前端应用 | [ywhc-admin-frontend](https://github.com/your-org/ywhc-admin/tree/main/ywhc-admin-frontend) |
+| 🖥️ **后端项目** | Spring Boot3 后端服务 | [ywhc-admin-backend](https://github.com/RandolphChin/ywhc-admin-backend.git) |
+| 🌐 **前端项目** | Vue3 + Quasar Framework 前端应用 | [ywhc-admin-frontend](https://github.com/RandolphChin/ywhc-admin-frontend.git) |
 
 
 ## 📋 功能特性
