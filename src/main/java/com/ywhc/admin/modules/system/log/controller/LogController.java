@@ -28,7 +28,7 @@ public class LogController {
 
     private final LogService logService;
 
-    @LogAccess(value = "查询日志列表", module = "日志管理", operationType = OperationType.QUERY)
+    //@LogAccess(value = "查询日志列表", module = "日志管理", operationType = OperationType.QUERY)
     @Operation(summary = "分页查询日志列表")
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('system:log:list')")

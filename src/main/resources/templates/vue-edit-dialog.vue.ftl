@@ -12,10 +12,10 @@
             </div>
           </div>
           <div class="flex items-center q-gutter-sm">
-            <q-btn 
-              flat 
-              round 
-              icon="close" 
+            <q-btn
+              flat
+              round
+              icon="close"
               color="grey-7"
               @click="handleClose"
             >
@@ -178,21 +178,18 @@
       <q-card-actions class="dialog-footer q-pa-md bg-grey-1">
         <div class="flex items-center justify-end full-width">
           <div class="q-gutter-sm">
-            <q-btn 
-              flat 
-              label="取消" 
+            <q-btn
+              flat
+              label="取消"
               color="grey-7"
-              @click="handleClose" 
-              :disable="submitting"
+              @click="handleClose"
               class="q-px-lg"
             />
-            <q-btn 
+            <q-btn
               v-if="!isReadonly"
-              color="primary" 
-              label="保存" 
+              color="primary"
+              label="保存"
               @click="handleSubmit"
-              :loading="submitting"
-              :disable="submitting"
               class="q-px-lg"
             />
           </div>
@@ -230,8 +227,6 @@ const visible = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value)
 })
-
-const submitting = ref(false)
 
 const formData = ref({
 <#list table.fields as field>
@@ -271,7 +266,7 @@ const formRef = ref(null)
 
 const handleSubmit = () => {
   if (props.isReadonly) return
-  
+
   formRef.value.validate().then((success) => {
     if (success) {
       emit('submit', formData.value)
