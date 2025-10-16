@@ -19,7 +19,7 @@
           <q-btn color="primary" outline icon="search" label="搜索" @click="load${entity}s" />
           <q-btn color="grey-6" outline icon="refresh" label="重置" @click="resetQuery" />
         </div>
-        <div class="row q-mt-xs q-gutter-sm">  
+        <div class="row q-mt-xs q-gutter-sm">
           <q-btn
             color="primary"
             outline
@@ -132,9 +132,9 @@
     </q-card>
 
     <!-- ${table.comment!}对话框 -->
-    <${entity}EditDialog 
-      v-model="${entity?uncap_first}Dialog" 
-      :${entity?uncap_first}-data="current${entity}" 
+    <${entity}EditDialog
+      v-model="${entity?uncap_first}Dialog"
+      :${entity?uncap_first}-data="current${entity}"
       :is-edit="dialogMode === 'edit'"
       :is-readonly="dialogMode === 'view'"
       @submit="handleSubmit"
@@ -206,10 +206,10 @@ const rowsPerPageOptions = [5, 10, 20, 50, 100]
 
 const load${entity}s = async (props) => {
   loading.value = true
-  
+
   try {
     const { page, rowsPerPage, sortBy, descending } = props?.pagination || pagination.value
-    
+
     const params = {
       current: page,
       size: rowsPerPage,
@@ -217,20 +217,20 @@ const load${entity}s = async (props) => {
       orderDirection: descending ? 'desc' : 'asc',
       ...queryForm.value
     }
-    
+
     const response = await ${entity?uncap_first}Api.getList(params)
     const pageData = response.data.data
     const records = pageData.records || []
     const total = pageData.total || 0
 
     ${entity?uncap_first}s.value = records
-  
+
     pagination.value.rowsNumber = total
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
     pagination.value.descending = descending
- 
+
   } catch (error) {
     console.error('加载${table.comment!}列表失败:', error)
   } finally {
@@ -263,17 +263,18 @@ const resetQuery = () => {
   }
   load${entity}s()
 }
-/**
- *  引用传递 vs 值传递
- * 深拷贝方式，创建新对象 JSON.parse(JSON.stringify(enterprise)) 
- *  在父组件传递数据时进行深拷贝，这样子组件的修改就不会影响到原始数据
- */
+
 const show${entity}Detail = (${entity?uncap_first}) => {
-  current${entity}.value = JSON.parse(JSON.stringify(${entity?uncap_first}))
+  current${entity}.value = ${entity?uncap_first}
   dialogMode.value = 'view'
   ${entity?uncap_first}Dialog.value = true
 }
 
+/**
+ *  引用传递 vs 值传递
+ * 深拷贝方式，创建新对象 JSON.parse(JSON.stringify(enterprise))
+ *  在父组件传递数据时进行深拷贝，这样子组件的修改就不会影响到原始数据
+ */
 const show${entity}Edit = (${entity?uncap_first}) => {
   current${entity}.value = JSON.parse(JSON.stringify(${entity?uncap_first}))
   dialogMode.value = 'edit'
@@ -337,7 +338,7 @@ const batchDelete = () => {
 const export${entity}s = async () => {
   try {
     const response = await ${entity?uncap_first}Api.export(queryForm.value)
-    
+
     // 从响应头中提取文件名
     let fileName = `${table.comment!}_${r'${new Date().getTime()}'}.xlsx` // 默认文件名
     const contentDisposition = response.headers['content-disposition']
@@ -347,7 +348,7 @@ const export${entity}s = async () => {
         fileName = fileNameMatch[1].replace(/['"]/g, '') // 移除引号
       }
     }
-    
+
     const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
@@ -355,7 +356,7 @@ const export${entity}s = async () => {
     link.download = fileName
     link.click()
     window.URL.revokeObjectURL(url)
-    
+
     $q.notify({
       type: 'positive',
       message: '${table.comment!}导出成功'
