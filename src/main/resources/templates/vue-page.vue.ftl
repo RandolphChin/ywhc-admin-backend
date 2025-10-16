@@ -263,15 +263,19 @@ const resetQuery = () => {
   }
   load${entity}s()
 }
-
+/**
+ *  引用传递 vs 值传递
+ * 深拷贝方式，创建新对象 JSON.parse(JSON.stringify(enterprise)) 
+ *  在父组件传递数据时进行深拷贝，这样子组件的修改就不会影响到原始数据
+ */
 const show${entity}Detail = (${entity?uncap_first}) => {
-  current${entity}.value = ${entity?uncap_first}
+  current${entity}.value = JSON.parse(JSON.stringify(${entity?uncap_first}))
   dialogMode.value = 'view'
   ${entity?uncap_first}Dialog.value = true
 }
 
 const show${entity}Edit = (${entity?uncap_first}) => {
-  current${entity}.value = ${entity?uncap_first}
+  current${entity}.value = JSON.parse(JSON.stringify(${entity?uncap_first}))
   dialogMode.value = 'edit'
   ${entity?uncap_first}Dialog.value = true
 }
