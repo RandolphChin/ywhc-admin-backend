@@ -249,18 +249,20 @@ const statusOptions = [
   </#if>
 </#list>
 
-watch(() => props.${entity?uncap_first}Data, (newData) => {
-  if (newData) {
-    formData.value = { ...newData }
-  } else {
-    // 重置表单
-    formData.value = {
-<#list table.fields as field>
-      ${field.propertyName}: <#if field.propertyType == "String">''<#elseif field.propertyType == "Integer" || field.propertyType == "Long">null<#elseif field.propertyType == "Boolean">false<#else>null</#if>,
-</#list>
+watch(() => props.modelValue, (isOpen) => {
+  if (isOpen) {
+    if(props.${entity?uncap_first}Data){
+      formData.value = { ...props.${entity?uncap_first}Data }
+    }else {
+      formData.value = {
+        <#list table.fields as field>
+        ${field.propertyName}: <#if field.propertyType == "String">''
+        <#elseif field.propertyType == "Integer" || field.propertyType == "Long">null<#elseif field.propertyType == "Boolean">false<#else>null</#if>,
+        </#list>
+      }
     }
   }
-}, { deep: true, immediate: true })
+})
 
 const formRef = ref(null)
 
