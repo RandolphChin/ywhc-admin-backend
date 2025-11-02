@@ -1,7 +1,10 @@
 package com.ywhc.admin.modules.generator.service.impl;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ywhc.admin.modules.generator.dto.GeneratorConfigDTO;
+import com.ywhc.admin.modules.generator.dto.GeneratorQueryDTO;
 import com.ywhc.admin.modules.generator.entity.ColumnInfo;
 import com.ywhc.admin.modules.generator.entity.TableInfo;
 import com.ywhc.admin.modules.generator.service.GeneratorService;
@@ -48,8 +51,9 @@ public class GeneratorServiceImpl implements GeneratorService {
     private String datasourcePassword;
 
     @Override
-    public List<TableInfo> getTableList() {
-        String sql = """
+    public IPage<TableInfo> getTableList(GeneratorQueryDTO queryDTO) {
+        // 构建查询SQL
+        StringBuilder sql = new StringBuilder("""
             SELECT 
                 table_name,
                 table_comment,
@@ -58,17 +62,72 @@ public class GeneratorServiceImpl implements GeneratorService {
             FROM information_schema.tables 
             WHERE table_schema = (SELECT DATABASE())
             AND table_type = 'BASE TABLE'
-            ORDER BY table_name
-            """;
+            """);
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+        List<Object> params = new ArrayList<>();
+
+        // 动态拼接查询条件
+        if (queryDTO != null) {
+            if (queryDTO.getTableName() != null && !queryDTO.getTableName().trim().isEmpty()) {
+                sql.append("AND table_name LIKE ? ");
+                params.add("%" + queryDTO.getTableName() + "%");
+            }
+            if (queryDTO.getTableComment() != null && !queryDTO.getTableComment().trim().isEmpty()) {
+                sql.append("AND table_comment LIKE ? ");
+                params.add("%" + queryDTO.getTableComment() + "%");
+            }
+        }
+
+        // 添加排序
+        String orderSql = queryDTO != null ? queryDTO.getOrderSql() : null;
+        if (orderSql != null) {
+            sql.append("ORDER BY ").append(orderSql);
+        } else {
+            sql.append("ORDER BY table_name");
+        }
+
+        // 先查询总数
+        String countSql = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = (SELECT DATABASE()) AND table_type = 'BASE TABLE'";
+        StringBuilder countCondition = new StringBuilder();
+        List<Object> countParams = new ArrayList<>();
+
+        if (queryDTO != null) {
+            if (queryDTO.getTableName() != null && !queryDTO.getTableName().trim().isEmpty()) {
+                countCondition.append(" AND table_name LIKE ?");
+                countParams.add("%" + queryDTO.getTableName() + "%");
+            }
+            if (queryDTO.getTableComment() != null && !queryDTO.getTableComment().trim().isEmpty()) {
+                countCondition.append(" AND table_comment LIKE ?");
+                countParams.add("%" + queryDTO.getTableComment() + "%");
+            }
+        }
+
+        Long total = jdbcTemplate.queryForObject(countSql + countCondition.toString(), Long.class, countParams.toArray());
+
+        // 添加分页
+        long current = queryDTO != null && queryDTO.getCurrent() != null ? queryDTO.getCurrent() : 1L;
+        long size = queryDTO != null && queryDTO.getSize() != null ? queryDTO.getSize() : 10L;
+        long offset = (current - 1) * size;
+
+        sql.append(" LIMIT ? OFFSET ?");
+        params.add(size);
+        params.add(offset);
+
+        // 查询分页数据
+        List<TableInfo> records = jdbcTemplate.query(sql.toString(), (rs, rowNum) -> {
             TableInfo tableInfo = new TableInfo();
             tableInfo.setTableName(rs.getString("table_name"));
             tableInfo.setTableComment(rs.getString("table_comment"));
             tableInfo.setEngine(rs.getString("engine"));
             tableInfo.setCreateTime(rs.getString("create_time"));
             return tableInfo;
-        });
+        }, params.toArray());
+
+        // 构建分页对象
+        Page<TableInfo> page = new Page<>(current, size, total != null ? total : 0);
+        page.setRecords(records);
+
+        return page;
     }
 
     @Override
@@ -537,7 +596,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             -- %s管理菜单SQL
             -- 1. 添加主菜单（根据实际需要调整parent_id，1表示系统管理目录）
             INSERT INTO `sys_menu` (`parent_id`, `menu_name`, `menu_type`, `path`, `component`, `permission`, `icon`, `sort_order`, `is_external`, `is_cache`, `is_visible`, `status`, `remark`, `deleted`, `create_time`, `update_time`, `create_by`, `update_by`) 
-            VALUES (1, '%s管理', 1, '/%s/%s', '%s/%s', '%s:%s:list', 'table', 10, 0, 1, 1, 1, '%s管理菜单', 0, NOW(), NOW(), 1, 1);
+            VALUES (1, '%s管理', 1, '/%s/%s', '%s/%s', '%s:%s:list', null, 10, 0, 1, 1, 1, '%s管理菜单', 0, NOW(), NOW(), 1, 1);
             
             -- 获取刚插入的菜单ID
             SET @menu_id = LAST_INSERT_ID();

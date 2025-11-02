@@ -1,9 +1,11 @@
 package com.ywhc.admin.modules.generator.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ywhc.admin.common.result.Result;
 import com.ywhc.admin.common.annotation.LogAccess;
 import com.ywhc.admin.common.enums.OperationType;
 import com.ywhc.admin.modules.generator.dto.GeneratorConfigDTO;
+import com.ywhc.admin.modules.generator.dto.GeneratorQueryDTO;
 import com.ywhc.admin.modules.generator.entity.TableInfo;
 import com.ywhc.admin.modules.generator.service.GeneratorService;
 import com.ywhc.admin.modules.generator.vo.GeneratedCodeVO;
@@ -15,8 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 代码生成控制器
@@ -32,13 +32,13 @@ public class GeneratorController {
 
     private final GeneratorService generatorService;
 
-    @LogAccess(value = "查询数据库表列表", module = "代码生成", operationType = OperationType.QUERY)
-    @Operation(summary = "获取数据库表列表")
+    @LogAccess(value = "分页查询数据库表列表", module = "代码生成", operationType = OperationType.QUERY)
+    @Operation(summary = "分页获取数据库表列表")
     @GetMapping("/tables")
     @PreAuthorize("hasAuthority('generator:table:list')")
-    public Result<List<TableInfo>> getTableList() {
-        List<TableInfo> tables = generatorService.getTableList();
-        return Result.success(tables);
+    public Result<IPage<TableInfo>> getTableList(GeneratorQueryDTO queryDTO) {
+        IPage<TableInfo> pageData = generatorService.getTableList(queryDTO);
+        return Result.success(pageData);
     }
 
     @LogAccess(value = "查询表详细信息", module = "代码生成", operationType = OperationType.QUERY)

@@ -1,10 +1,10 @@
 package com.ywhc.admin.modules.generator.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ywhc.admin.modules.generator.dto.GeneratorConfigDTO;
+import com.ywhc.admin.modules.generator.dto.GeneratorQueryDTO;
 import com.ywhc.admin.modules.generator.entity.TableInfo;
 import com.ywhc.admin.modules.generator.vo.GeneratedCodeVO;
-
-import java.util.List;
 
 /**
  * 代码生成服务接口
@@ -15,9 +15,10 @@ import java.util.List;
 public interface GeneratorService {
     
     /**
-     * 获取数据库表列表
+     * 分页查询数据库表列表
+     * @param queryDTO 查询条件
      */
-    List<TableInfo> getTableList();
+    IPage<TableInfo> getTableList(GeneratorQueryDTO queryDTO);
     
     /**
      * 获取表详细信息
