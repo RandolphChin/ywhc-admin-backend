@@ -172,7 +172,7 @@ const queryForm = ref({
 })
 
 const pagination = ref({
-  sortBy: 'createTime',
+  sortBy: '${table.primaryKey.propertyName}',
   descending: true,
   page: 1,
   rowsPerPage: 10,
@@ -213,7 +213,7 @@ const load${entity}s = async (props) => {
     const params = {
       current: page,
       size: rowsPerPage,
-      orderBy: sortBy || 'createTime',
+      orderBy: sortBy || '${table.primaryKey.propertyName}',
       orderDirection: descending ? 'desc' : 'asc',
       ...queryForm.value
     }
@@ -290,7 +290,7 @@ const delete${entity} = (${entity?uncap_first}) => {
     persistent: true
   }).onOk(async () => {
     try {
-      await ${entity?uncap_first}Api.delete(${entity?uncap_first}.id)
+      await ${entity?uncap_first}Api.delete(${entity?uncap_first}.${table.primaryKey.propertyName})
       $q.notify({
         type: 'positive',
         message: '${table.comment!}删除成功'
@@ -313,7 +313,7 @@ const batchDelete = () => {
     persistent: true
   }).onOk(async () => {
     try {
-      const ids = selectedRows.value.map(row => row.id)
+      const ids = selectedRows.value.map(row => row.${table.primaryKey.propertyName})
       await ${entity?uncap_first}Api.batchDelete(ids)
       $q.notify({
         type: 'positive',
@@ -370,7 +370,7 @@ const handleRefresh = () => {
 
 const handleSubmit = async (${entity?uncap_first}Data) => {
   try {
-    if (${entity?uncap_first}Data.id) {
+    if (${entity?uncap_first}Data.${table.primaryKey.propertyName}) {
       await ${entity?uncap_first}Api.update(${entity?uncap_first}Data)
       $q.notify({
         type: 'positive',

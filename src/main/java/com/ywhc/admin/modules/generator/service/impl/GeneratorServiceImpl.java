@@ -473,6 +473,9 @@ public class GeneratorServiceImpl implements GeneratorService {
         importPackages.add("com.baomidou.mybatisplus.annotation.TableField");
         importPackages.add("com.baomidou.mybatisplus.annotation.IdType");
 
+        // 主键信息
+        Map<String, Object> primaryKeyInfo = null;
+
         for (ColumnInfo column : tableInfo.getColumns()) {
             Map<String, Object> field = new HashMap<>();
             field.put("columnName", column.getColumnName());
@@ -502,11 +505,28 @@ public class GeneratorServiceImpl implements GeneratorService {
                 importPackages.add("java.math.BigDecimal");
             }
 
+            // 记录主键信息
+            if (column.getIsPrimaryKey() != null && column.getIsPrimaryKey()) {
+                primaryKeyInfo = field;
+            }
+
             fields.add(field);
         }
         table.put("fields", fields);
         table.put("importPackages", new ArrayList<>(importPackages));
         table.put("convert", true);
+
+        // 添加主键信息到table对象，如果没有主键则使用默认值
+        if (primaryKeyInfo != null) {
+            table.put("primaryKey", primaryKeyInfo);
+        } else {
+            // 默认使用Long类型的id
+            Map<String, Object> defaultPrimaryKey = new HashMap<>();
+            defaultPrimaryKey.put("propertyName", "id");
+            defaultPrimaryKey.put("propertyType", "Long");
+            defaultPrimaryKey.put("capitalName", "Id");
+            table.put("primaryKey", defaultPrimaryKey);
+        }
 
         data.put("table", table);
         data.put("entity", GeneratorUtils.toPascalCase(config.getBusinessName()));

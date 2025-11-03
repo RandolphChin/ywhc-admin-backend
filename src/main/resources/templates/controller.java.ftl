@@ -60,7 +60,7 @@ public class ${table.controllerName} {
     @Operation(summary = "根据ID查询${table.comment!}详情")
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('${cfg.moduleName}:${cfg.businessName}:query')")
-    public Result<${entity}VO> get${entity}(@PathVariable Long id) {
+    public Result<${entity}VO> get${entity}(@PathVariable ${table.primaryKey.propertyType} id) {
         ${entity}VO ${entity?uncap_first}VO = ${table.serviceName?uncap_first}.get${entity}ById(id);
         return Result.success(${entity?uncap_first}VO);
     }
@@ -87,7 +87,7 @@ public class ${table.controllerName} {
     @Operation(summary = "删除${table.comment!}")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('${cfg.moduleName}:${cfg.businessName}:remove')")
-    public Result<String> delete${entity}(@PathVariable Long id) {
+    public Result<String> delete${entity}(@PathVariable ${table.primaryKey.propertyType} id) {
         ${table.serviceName?uncap_first}.delete${entity}(id);
         return Result.success("${table.comment!}删除成功");
     }
@@ -96,7 +96,7 @@ public class ${table.controllerName} {
     @Operation(summary = "批量删除${table.comment!}")
     @DeleteMapping("/batch")
     @PreAuthorize("hasAuthority('${cfg.moduleName}:${cfg.businessName}:remove')")
-    public Result<String> delete${entity}s(@RequestBody List<Long> ids) {
+    public Result<String> delete${entity}s(@RequestBody List<${table.primaryKey.propertyType}> ids) {
         ${table.serviceName?uncap_first}.delete${entity}(ids);
         return Result.success("${table.comment!}批量删除成功");
     }

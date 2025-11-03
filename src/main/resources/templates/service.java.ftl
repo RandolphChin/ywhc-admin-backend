@@ -35,7 +35,7 @@ public interface ${table.serviceName} extends IService<${entity}> {
     /**
      * 创建${table.comment!}
      */
-    Long create${entity}(${entity}CreateDTO dto);
+    ${table.primaryKey.propertyType} create${entity}(${entity}CreateDTO dto);
 
     /**
      * 更新${table.comment!}
@@ -45,15 +45,15 @@ public interface ${table.serviceName} extends IService<${entity}> {
     /**
      * 删除${table.comment!}
      */
-    void delete${entity}(Long id);
+    void delete${entity}(${table.primaryKey.propertyType} id);
 
     /**
      * 批量删除${table.comment!}
      */
-    void delete${entity}(List<Long> ids);
+    void delete${entity}(List<${table.primaryKey.propertyType}> ids);
 
     /**
      * 根据ID获取${table.comment!}详情
      */
-    ${entity}VO get${entity}ById(Long id);
+    ${entity}VO get${entity}ById(${table.primaryKey.propertyType} id);
 }

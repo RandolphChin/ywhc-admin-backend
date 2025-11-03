@@ -108,11 +108,11 @@ public class ${table.serviceImplName} extends ServiceImpl<${table.mapperName}, $
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long create${entity}(${entity}CreateDTO dto) {
+    public ${table.primaryKey.propertyType} create${entity}(${entity}CreateDTO dto) {
         ${entity} entity = new ${entity}();
         BeanUtils.copyProperties(dto, entity);
         this.save(entity);
-        return entity.getId();
+        return entity.get${table.primaryKey.capitalName}();
     }
 
     @Override
@@ -125,18 +125,18 @@ public class ${table.serviceImplName} extends ServiceImpl<${table.mapperName}, $
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delete${entity}(Long id) {
+    public void delete${entity}(${table.primaryKey.propertyType} id) {
         this.removeById(id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delete${entity}(List<Long> ids) {
+    public void delete${entity}(List<${table.primaryKey.propertyType}> ids) {
         this.removeByIds(ids);
     }
 
     @Override
-    public ${entity}VO get${entity}ById(Long id) {
+    public ${entity}VO get${entity}ById(${table.primaryKey.propertyType} id) {
         ${entity} entity = this.getById(id);
         if (entity == null) {
             return null;
